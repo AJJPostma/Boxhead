@@ -8,9 +8,25 @@
     <script src="js/OBJLoader.js"></script>
     <script src="js/three.min.js"></script>
     <script src="js/Detector.js"></script>
+    <script src="js/jquery-3.1.1.min.js"></script>
     <title>Title</title>
 </head>
 <body>
+<script>
+    var scene = new THREE.Scene();
+    var renderer = new THREE.WebGLRenderer();
+    var camera = new THREE.PerspectiveCamera(75, 640 / 480, 0.1, 1000);
+    renderer.setSize(640, 480);
+    renderer.setClearColor(0x00FFF);
+    document.body.appendChild(renderer.domElement);
 
+    scene.add(new THREE.AmbientLight(0x111111));
+    render();
+    function render(){
+        requestAnimationFrame(render);
+        renderer.render(scene, camera);
+    }
+
+ </script>
 </body>
 </html>
