@@ -28,7 +28,7 @@
 
     scene = new THREE.Scene();
 
-    var cubeGeometry = new THREE.BoxGeometry(5, 5, 5);
+    var cubeGeometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
     var cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x1ec876 });
     cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
@@ -36,12 +36,12 @@
     scene.add(cube);
 
     camera = new THREE.PerspectiveCamera(45, 640 / 480, 0.1, 10000);
-    camera.position.y = 100;
+    camera.position.y = 50;
     camera.rotation.x = -1;
     //camera.position.z = 400;
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-    var gridXZ = new THREE.GridHelper(25, 10, 0xff4040, 0x0000ff);
+    var gridXZ = new THREE.GridHelper(22, 20, 0xff4040, 0x0000ff);
 
     scene.add(gridXZ);
 
@@ -55,6 +55,31 @@
         requestAnimationFrame(render);
         renderer.render(scene, camera);
     }
+    render();
+    $(document).keydown(function (e) {
+        switch (e.which) {
+            case 37: // left
+                cube.position.x -= 1;
+
+                break;
+
+            case 38: // up
+                cube.position.z -= 1;
+                break;
+
+            case 39: // right
+                cube.position.x += 1;
+                break;
+
+            case 40: // down
+                cube.position.z += 1;
+                break;
+
+
+            default: return;
+        }
+        e.preventDefault();
+    });
 
  </script>
 </body>
