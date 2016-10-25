@@ -28,29 +28,57 @@
 
     scene = new THREE.Scene();
 
-    var cubeGeometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
+    var cubeGeometry = new THREE.BoxGeometry(0.05, 0.05, 0.05);
     var cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x1ec876 });
     cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
-    cube.position.set(5, 0, 5);
+    cube.position.set(0, 0, 0);
     scene.add(cube);
 
     camera = new THREE.PerspectiveCamera(45, 640 / 480, 0.1, 10000);
-    camera.position.y = 50;
+    camera.position.y = 3;
+   camera.position.x += 1.5;
     camera.rotation.x = -1;
-    //camera.position.z = 400;
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
+   camera.position.z += 1;
+    camera.lookAt(new THREE.Vector3(1.5, 0, 1));
 
-    var gridXZ = new THREE.GridHelper(22, 20, 0xff4040, 0x0000ff);
-
+    var gridXZ = new THREE.GridHelper(1, 20, 0xff4040, 0x0000ff);
+gridXZ.position.x += 1;
+    gridXZ.position.z += 1;
     scene.add(gridXZ);
 
     var pointLight = new THREE.PointLight(0xffffff);
     pointLight.position.set(0, 300, 200);
     scene.add(pointLight);
 
-    renderer.render(scene, camera);
-
+    var matrix = [
+        [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ];
+    var grid = new PF.Grid(20,20,matrix);
+    var finder = new PF.AStarFinder();
+    //var startNode = grid.getNodeAt(5,1);
+    //var endNode = grid.getNodeAt(1,1);
+    var path = finder.findPath(5,0,0,0, grid);
+    console.log(path);
     function render(){
         requestAnimationFrame(render);
         renderer.render(scene, camera);
@@ -59,20 +87,20 @@
     $(document).keydown(function (e) {
         switch (e.which) {
             case 37: // left
-                cube.position.x -= 1;
+                cube.position.x -= 0.1;
 
                 break;
 
             case 38: // up
-                cube.position.z -= 1;
+                cube.position.z -= 0.1;
                 break;
 
             case 39: // right
-                cube.position.x += 1;
+                cube.position.x += 0.1;
                 break;
 
             case 40: // down
-                cube.position.z += 1;
+                cube.position.z += 0.1;
                 break;
 
 
