@@ -12,24 +12,53 @@
     <script src="js/Detector.js"></script>
 
     <script>
-myAudio = new Audio('sounds/background.ogg');
+        myAudio = new Audio('sounds/background.ogg');
         myAudio.addEventListener('ended', function () {
             this.currentTime = 0;
             this.play();
         }, false);
+        myAudio.volume = 0.5;
         myAudio.play();</script>
 
 
     <title>Title</title>
 </head>
-<body style="overflow: hidden;">
-    <div id="gameInfo" style="position:absolute; left:435px">
-        <p id="score" style="color:white;"></p>
-        <p style="color:white;">Health:  <progress id="health" max="100"></progress> </p>
+<body style="overflow: hidden; background-color:black;">
+    <div id="gameInfo" style="position:absolute; color:white; left:500px">
+        <p id="score"></p>
+        <p>Health:  <progress id="health" max="100"></progress> </p>
+        <p>Use arrow keys to move</p>
+        <p>Press space to shoot</p>
+        <p>Use number keys to change weapon</p>
+        <p>Press p to pause/unpause</p>
     </div>
     <script>
+        var lazerSound = new Audio('sounds/lazer.wav');
+		var levelUpSound = new Audio('sounds/levelUp.wav');
         var score = 0;
         var health = 100;
+        var isPaused = 0;
+        $(document).keydown(function (e) {
+            switch (e.which) {
+                case 80: //p
+                    setPause();
+                    break;
+                default: return;
+            }
+            e.preventDefault();
+        });
+
+        function setPause() {
+            if (isPaused == 0) {
+                isPaused = 1;
+                myAudio.pause();
+            }
+            else {
+                isPaused = 0;
+                myAudio.play();
+                render();
+            }
+        }
         var playedLosingSound = 0;
         function setHealth() {
             document.getElementById('health').value = health;
@@ -39,6 +68,7 @@ myAudio = new Audio('sounds/background.ogg');
         }
         var scene, renderer, camera;
         var cube;
+        var playerDirection = 2;
         var level = 1;
         var zombieaantal = 5;
         var matrix = [
@@ -68,14 +98,19 @@ myAudio = new Audio('sounds/background.ogg');
         document.body.appendChild(renderer.domElement);
 
         scene = new THREE.Scene();
-
+        var lazerDirection;
         var cubeGeometry = new THREE.BoxGeometry(0.05, 0.05, 0.05);
+        var lazerGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+        var lazerMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
         var cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x1ec876 });
         var cubeMaterial2 = new THREE.MeshLambertMaterial({ color: 0x0000FF });
         var cubeMaterial3 = new THREE.MeshLambertMaterial({ color: 0xFF00FF });
         var cubeMaterial4 = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
         var cubeMaterial5 = new THREE.MeshLambertMaterial({ color: 0x0F0F0F });
         var cubeMaterial6 = new THREE.MeshLambertMaterial({ color: 0xF0F0FF });
+        var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
+        scene.add(lazer);
+        lazer.position.set(-10, 0, 0);
         cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
         cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
         cube3 = new THREE.Mesh(cubeGeometry, cubeMaterial3);
@@ -111,6 +146,8 @@ myAudio = new Audio('sounds/background.ogg');
         var zombies = [];
         var finderlist = [];
         var gridlist = [];
+        var zombieHealthList = [];
+        zombielist();
         function zombielist() {
 
             //var minus = 0.0;
@@ -149,10 +186,7 @@ myAudio = new Audio('sounds/background.ogg');
                     allowDiagonal: true,
                     dontCrossCorners: true
                 });
-
-
-
-
+                zombieHealthList[i] = 100;
 
             }
 
@@ -167,7 +201,7 @@ myAudio = new Audio('sounds/background.ogg');
                     }
             */
         }
-        zombielist();
+       
         var path;
         var pathlist = [];
         var startx = 0;
@@ -184,35 +218,33 @@ myAudio = new Audio('sounds/background.ogg');
 
 
         function pathfinder() {
-            endx = Math.round(cube.position.x * 10);
-            endz = Math.round(cube.position.z * 10);
+
+            if (isPaused == 0) {
+                endx = Math.round(cube.position.x * 10);
+                endz = Math.round(cube.position.z * 10);
 
 
-            for (c = 0; c < zombies.length; c++) {
+                for (c = 0; c < zombies.length; c++) {
+
+                    if (zombieHealthList[c] > 0) {
+                        gridlist[c] = new PF.Grid(matrix);
+                        startx = Math.round(zombies[c].position.x * 10);
+                        startz = Math.round(zombies[c].position.z * 10);
+                        pathlist[c] = (finderlist[c].findPath(startx, startz, endx, endz, gridlist[c])).slice(0, 2);
+                        matrix[pathlist[c][0][1]][pathlist[c][0][0]] = 0;
+
+                        zombies[c].position.x = (pathlist[c][1][0]) / 10;
+                        zombies[c].position.z = (pathlist[c][1][1]) / 10;
+
+                        matrix[pathlist[c][1][1]][pathlist[c][1][0]] = 1;
+                    }
 
 
-                gridlist[c] = new PF.Grid(matrix);
-                startx = Math.round(zombies[c].position.x * 10);
-                startz = Math.round(zombies[c].position.z * 10);
-                pathlist[c] = (finderlist[c].findPath(startx, startz, endx, endz, gridlist[c])).slice(0, 2);
-                matrix[pathlist[c][0][1]][pathlist[c][0][0]] = 0;
-
-                zombies[c].position.x = (pathlist[c][1][0]) / 10;
-                zombies[c].position.z = (pathlist[c][1][1]) / 10;
-
-                matrix[pathlist[c][1][1]][pathlist[c][1][0]] = 1;
-
-
-
+                }
 
             }
 
         }
-        var ancoIndex = [];
-        for (i = 0; i < zombies.length; i++) {
-            ancoIndex[i] = [2, 2];
-        }
-
 
 
         pathfinder();
@@ -220,57 +252,99 @@ myAudio = new Audio('sounds/background.ogg');
             setInterval(function () {
                 pathfinder();
             }, 700);
+            setInterval(function () {
+                checkZombiesHealth();
+            },4000)
 
         }
         var isImmuneToDamge = 0;
+
+        //Start render function
         function render() {
-            requestAnimationFrame(render);
-            isImmuneToDamge = 0;
 
-            //If zombie touches player
-            for (var c = 0; c < zombies.length; c++) {
-                var zombiePosX = Math.round(zombies[c].position.x * 10);
-                var zombiePosZ = Math.round(zombies[c].position.z * 10);
-                var playerPosX = Math.round(cube.position.x * 10);
-                var playerPosZ = Math.round(cube.position.z * 10);
-                if (zombiePosX == playerPosX && zombiePosZ == playerPosZ && isImmuneToDamge == 0) {
-                    health--;
-                    console.log(health);
-                }
+
+            if (lazerDirection == 1) {
+                lazer.position.z -= 0.1;
+            }
+            else if (lazerDirection == 2) {
+                lazer.position.x += 0.1;
+            }
+            else if (lazerDirection == 3) {
+                lazer.position.z += 0.1;
+            }
+            else if (lazerDirection == 4) {
+                lazer.position.x -= 0.1;
             }
 
-            //When health reaches 0
-            if (health < 0) {
+            if (isPaused == 0) {
+                requestAnimationFrame(render);
+                isImmuneToDamge = 0;
 
-                //sets losing screen image
-                var img = document.createElement("img");
-                img.src = "images/lose.png";
-                img.width = 680;
-                img.height = 480;
-                img.alt = "You lost";
-                img.style.position = "absolute";
-                img.style.left = "0px";
-                // This next line will just add it to the <body> tag
-                document.body.appendChild(img);
 
-                //plays losing sound
-                if (playedLosingSound == 0) {
-                    myAudio.pause();
-                    myAudio.currentTime = 0;
-                   var LosingSound = new Audio('sounds/lose.wav');
-                    
-                    LosingSound.play();
-                    playedLosingSound = 1;
+                for (var c = 0; c < zombies.length; c++) {
+
+                    //if zombie gets hit
+                    if (Math.abs(lazer.position.x - zombies[c].position.x) < 0.1 && Math.abs(lazer.position.z - zombies[c].position.z) < 0.1) {
+                        
+                        lazer.position.x += 100;
+                        zombieHealthList[c] = zombieHealthList[c] - 20;
+                        console.log("zombie#"+c+" health: " + zombieHealthList[c])
+                        score += 20;
+                    }
+
+                    //checks if zombie is dead
+                    if (zombieHealthList[c] <= 0) {
+                        zombies[c].position.x = -100;
+                        zombies[c].position.y = -100;
+                        zombies[c].position.z = -100;
+
+                    }
+
+                    var zombiePosX = Math.round(zombies[c].position.x * 10);
+                    var zombiePosZ = Math.round(zombies[c].position.z * 10);
+                    var playerPosX = Math.round(cube.position.x * 10);
+                    var playerPosZ = Math.round(cube.position.z * 10);
+
+                    //If zombie touches player
+                    if (zombiePosX == playerPosX && zombiePosZ == playerPosZ && isImmuneToDamge == 0) {
+                        health--;
+                        console.log(health);
+                    }
                 }
 
+                //When health reaches 0
+                if (health < 0) {
+
+                    //sets losing screen image
+                    var img = document.createElement("img");
+                    img.src = "images/lose.png";
+                    img.width = 680;
+                    img.height = 480;
+                    img.alt = "You lost";
+                    img.style.position = "absolute";
+                    img.style.left = "0px";
+                    // This next line will just add it to the <body> tag
+                    document.body.appendChild(img);
+
+                    //plays losing sound
+                    if (playedLosingSound == 0) {
+                        myAudio.pause();
+                        myAudio.currentTime = 0;
+                        var LosingSound = new Audio('sounds/lose.wav');
+
+                        LosingSound.play();
+                        playedLosingSound = 1;
+                    }
+
+                }
+
+
+
+
+                setHealth();
+                setScore();
+                renderer.render(scene, camera);
             }
-
-
-
-
-            setHealth();
-            setScore();
-            renderer.render(scene, camera);
         }
         zombiespawner();
         //zombielist();
@@ -279,35 +353,69 @@ myAudio = new Audio('sounds/background.ogg');
 
         $(document).keydown(function (e) {
             switch (e.which) {
+                case 32: //space
+                    lazer.position.x = cube.position.x;
+                    lazer.position.z = cube.position.z;
+                    lazerDirection = playerDirection;
+                    lazerSound.play();
+                    break;
                 case 37: // left
+                    playerDirection = 4;
                     if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) - 1]) == 0) {
                         cube.position.x -= 0.1;
                     }
                     break;
 
                 case 38: // up
+                    playerDirection = 1;
                     if ((matrix[Math.round(cube.position.z * 10) - 1][Math.round(cube.position.x * 10)]) == 0) {
                         cube.position.z -= 0.1;
                     }
                     break;
 
                 case 39: // right
+                    playerDirection = 2;
                     if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) + 1]) == 0) {
                         cube.position.x += 0.1;
                     }
                     break;
 
                 case 40: // down
+                    playerDirection = 3;
                     if ((matrix[Math.round(cube.position.z * 10) + 1][Math.round(cube.position.x * 10)]) == 0) {
                         cube.position.z += 0.1;
                     }
                     break;
 
 
+
                 default: return;
             }
             e.preventDefault();
         });
+
+        function checkZombiesHealth()
+        {
+            var zombieHealthSum = 0;
+            for (var i =0;i<zombies.length;i++)
+            {
+                if (zombies[i].position.y==-100)
+                {
+                    zombieHealthList[i] = 0;
+                }
+                else {
+                    zombieHealthSum = 1;
+                }
+            }
+            if (zombieHealthSum <= 0)
+            {
+				levelUpSound.play();
+                alert("Need to build next level function here");
+            }
+        }
+
+
+
 
 
     </script>
