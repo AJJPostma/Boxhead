@@ -23,26 +23,26 @@
         var level = 1;
         var zombieaantal = 5;
         var matrix = [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ];
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(640, 480);
@@ -63,7 +63,7 @@
         cube4 = new THREE.Mesh(cubeGeometry, cubeMaterial4);
         cube5 = new THREE.Mesh(cubeGeometry, cubeMaterial5);
         cube6 = new THREE.Mesh(cubeGeometry, cubeMaterial6);
-        cube.position.set(0, 0, 0);
+        cube.position.set(0.1, 0, 0.1);
         //cube2.position.set(0.5, 0, 0.9);
 
         scene.add(cube);
@@ -131,7 +131,7 @@
                     dontCrossCorners: true
                 });
 
-                
+
 
 
 
@@ -175,11 +175,13 @@
                 gridlist[c] = new PF.Grid(matrix);
                 startx = Math.round(zombies[c].position.x * 10);
                 startz = Math.round(zombies[c].position.z * 10);
-                pathlist[c] = finderlist[c].findPath(startx, startz, endx, endz, gridlist[c]);
-                console.log(pathlist[c]);
+                pathlist[c] = (finderlist[c].findPath(startx, startz, endx, endz, gridlist[c])).slice(0, 2);
+                matrix[pathlist[c][0][1]][pathlist[c][0][0]] = 0;
+                matrix[pathlist[c][1][1]][pathlist[c][1][0]] = 1;
 
-                
+
             }
+            walk();
         }
         var ancoIndex = [];
         for (i = 0; i < zombies.length; i++) {
@@ -195,28 +197,20 @@
             setInterval(function () {
                 pathfinder();
                 counter = 0;
-            }, 2100);
-            setInterval(function () {
-                walk();
-
             }, 700);
+
         }
         function render() {
             requestAnimationFrame(render);
 
             if (wilWalk == 1) {
                 for (v = 0; v < zombies.length; v++) {
-                    if (counter == 0 && pathlist[v].length > 1) {
-                        zombies[v].position.x = (pathlist[v][1][0]) / 10;
-                        zombies[v].position.z = (pathlist[v][1][1]) / 10;
-                        ancoIndex[v][0] = 2;
-                        ancoIndex[v][1] = 2;
-                    } else if (pathlist[v].length > 1) {
-                        zombies[v].position.x = (pathlist[v][ancoIndex[v][0]][0]) / 10;
-                        zombies[v].position.z = (pathlist[v][ancoIndex[v][1]][1]) / 10;
-                        ancoIndex[v][0]++;
-                        ancoIndex[v][1]++;
-                    }
+
+
+                    zombies[v].position.x = (pathlist[v][1][0]) / 10;
+                    zombies[v].position.z = (pathlist[v][1][1]) / 10;
+
+
                 }
                 counter = 1;
                 wilWalk = 0;
@@ -233,20 +227,27 @@
         $(document).keydown(function (e) {
             switch (e.which) {
                 case 37: // left
-                    cube.position.x -= 0.1;
-
+                    if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) - 1]) == 0) {
+                        cube.position.x -= 0.1;
+                    }
                     break;
 
                 case 38: // up
-                    cube.position.z -= 0.1;
+                    if ((matrix[Math.round(cube.position.z * 10)-1][Math.round(cube.position.x * 10)]) == 0) {
+                        cube.position.z -= 0.1;
+                    }
                     break;
 
                 case 39: // right
-                    cube.position.x += 0.1;
+                    if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) + 1]) == 0) {
+                        cube.position.x += 0.1;
+                    }
                     break;
 
                 case 40: // down
-                    cube.position.z += 0.1;
+                    if ((matrix[Math.round(cube.position.z * 10) + 1][Math.round(cube.position.x * 10)]) == 0) {
+                        cube.position.z += 0.1;
+                    }
                     break;
 
 
