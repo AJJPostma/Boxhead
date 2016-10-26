@@ -11,15 +11,34 @@
 
     <script src="js/Detector.js"></script>
 
+    <script>
+myAudio = new Audio('sounds/background.ogg');
+        myAudio.addEventListener('ended', function () {
+            this.currentTime = 0;
+            this.play();
+        }, false);
+        myAudio.play();</script>
+
 
     <title>Title</title>
 </head>
 <body style="overflow: hidden;">
+    <div id="gameInfo" style="position:absolute; left:435px">
+        <p id="score" style="color:white;"></p>
+        <p style="color:white;">Health:  <progress id="health" max="100"></progress> </p>
+    </div>
     <script>
+        var score = 0;
+        var health = 100;
+        var playedLosingSound = 0;
+        function setHealth() {
+            document.getElementById('health').value = health;
+        }
+        function setScore() {
+            document.getElementById('score').innerHTML = "Score:" + score;
+        }
         var scene, renderer, camera;
-        var wilWalk = 0;
         var cube;
-        var counter;
         var level = 1;
         var zombieaantal = 5;
         var matrix = [
@@ -177,46 +196,80 @@
                 startz = Math.round(zombies[c].position.z * 10);
                 pathlist[c] = (finderlist[c].findPath(startx, startz, endx, endz, gridlist[c])).slice(0, 2);
                 matrix[pathlist[c][0][1]][pathlist[c][0][0]] = 0;
+
+                zombies[c].position.x = (pathlist[c][1][0]) / 10;
+                zombies[c].position.z = (pathlist[c][1][1]) / 10;
+
                 matrix[pathlist[c][1][1]][pathlist[c][1][0]] = 1;
 
 
+
+
             }
-            walk();
+
         }
         var ancoIndex = [];
         for (i = 0; i < zombies.length; i++) {
             ancoIndex[i] = [2, 2];
         }
 
-        function walk() {
-            wilWalk = 1;
-        }
+
 
         pathfinder();
         function timer() {
             setInterval(function () {
                 pathfinder();
-                counter = 0;
             }, 700);
 
         }
+        var isImmuneToDamge = 0;
         function render() {
             requestAnimationFrame(render);
+            isImmuneToDamge = 0;
 
-            if (wilWalk == 1) {
-                for (v = 0; v < zombies.length; v++) {
-
-
-                    zombies[v].position.x = (pathlist[v][1][0]) / 10;
-                    zombies[v].position.z = (pathlist[v][1][1]) / 10;
-
-
+            //If zombie touches player
+            for (var c = 0; c < zombies.length; c++) {
+                var zombiePosX = Math.round(zombies[c].position.x * 10);
+                var zombiePosZ = Math.round(zombies[c].position.z * 10);
+                var playerPosX = Math.round(cube.position.x * 10);
+                var playerPosZ = Math.round(cube.position.z * 10);
+                if (zombiePosX == playerPosX && zombiePosZ == playerPosZ && isImmuneToDamge == 0) {
+                    health--;
+                    console.log(health);
                 }
-                counter = 1;
-                wilWalk = 0;
+            }
+
+            //When health reaches 0
+            if (health < 0) {
+
+                //sets losing screen image
+                var img = document.createElement("img");
+                img.src = "images/lose.png";
+                img.width = 640;
+                img.height = 480;
+                img.alt = "You lost";
+                img.style.position = "absolute";
+                img.style.left = "0px";
+                // This next line will just add it to the <body> tag
+                document.body.appendChild(img);
+
+                //plays losing sound
+                if (playedLosingSound == 0) {
+                    myAudio.pause();
+                    myAudio.currentTime = 0;
+                   var LosingSound = new Audio('sounds/lose.wav');
+                    
+                    LosingSound.play();
+                    playedLosingSound = 1;
+                }
 
             }
 
+
+
+
+            setHealth();
+            setScore();
             renderer.render(scene, camera);
         }
         zombiespawner();
@@ -233,7 +286,7 @@
                     break;
 
                 case 38: // up
-                    if ((matrix[Math.round(cube.position.z * 10)-1][Math.round(cube.position.x * 10)]) == 0) {
+                    if ((matrix[Math.round(cube.position.z * 10) - 1][Math.round(cube.position.x * 10)]) == 0) {
                         cube.position.z -= 0.1;
                     }
                     break;
