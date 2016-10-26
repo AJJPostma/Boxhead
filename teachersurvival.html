@@ -14,14 +14,14 @@
 
     <title>Title</title>
 </head>
-<body>
+<body style="overflow: hidden;">
+<button onclick="zombielist()">kaasbaas</button>
 <script>
     var scene, renderer, camera;
     var cube;
-
-    var width = window.innerWidth;
-    var height = window.innerHeight;
-
+    var counter;
+    var level = 1;
+    var zombieaantal = 5;
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(640, 480);
     document.body.appendChild(renderer.domElement);
@@ -30,60 +30,154 @@
 
     var cubeGeometry = new THREE.BoxGeometry(0.05, 0.05, 0.05);
     var cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x1ec876 });
+    var cubeMaterial2 = new THREE.MeshLambertMaterial({ color: 0x0000FF });
     cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-
+    cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
     cube.position.set(0, 0, 0);
+    //cube2.position.set(0.5, 0, 0.9);
+
     scene.add(cube);
+    var gridXZ = new THREE.GridHelper(1, 20, 0xff4040, 0x0000ff);
+    gridXZ.position.x += 1;
+    gridXZ.position.z += 1;
+    scene.add(gridXZ);
 
     camera = new THREE.PerspectiveCamera(45, 640 / 480, 0.1, 10000);
     camera.position.y = 3;
-   camera.position.x += 1.5;
+    camera.position.x += 1.5;
     camera.rotation.x = -1;
-   camera.position.z += 1;
+    camera.position.z += 1;
     camera.lookAt(new THREE.Vector3(1.5, 0, 1));
-
-    var gridXZ = new THREE.GridHelper(1, 20, 0xff4040, 0x0000ff);
-gridXZ.position.x += 1;
-    gridXZ.position.z += 1;
-    scene.add(gridXZ);
 
     var pointLight = new THREE.PointLight(0xffffff);
     pointLight.position.set(0, 300, 200);
     scene.add(pointLight);
+    function levelcalc(){
 
-    var matrix = [
-        [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ];
-    var grid = new PF.Grid(20,20,matrix);
-    var finder = new PF.AStarFinder();
-    //var startNode = grid.getNodeAt(5,1);
-    //var endNode = grid.getNodeAt(1,1);
-    var path = finder.findPath(5,0,0,0, grid);
-    console.log(path);
+    }
+    function zombiespawner(){
+        zombieaantal = zombieaantal * level;
+
+    }
+    var zombies = new Array(5);
+    function zombielist(){
+
+        for(i=0; i < zombieaantal; i++) {
+            zombies[i] = (cube2);
+        }
+        var d = 0;
+
+           var spawn = setInterval(function(){
+                scene.add(zombies[d]);
+               zombies[d].setPosition(2,0,2);
+                d++;
+               if(d >= zombieaantal){
+                   clearInterval(spawn);
+               }
+            }, 1000);
+
+
+/*
+        for(b = 0; b < zombieaantal; b++)
+        {
+            zombies[b].position.x = (b / 2 ) + 0.5;
+            zombies[b].position.z = (b / 2) + 0.5;
+            zombies[b].position.y = 0;
+        }
+*/
+    }
+
+    var path;
+    var pathlist = [];
+    var startx = 0;
+    var startz = 0;
+    var endx = 0;
+    var endz = 0;
+    function pathfinder() {
+        var matrix = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ];
+
+
+        var grid = new PF.Grid(20, 20, matrix);
+        var finder = new PF.AStarFinder({
+            allowDiagonal: true,
+            dontCrossCorners: true
+        });
+        //var startNode = grid.getNodeAt(5,1);
+        //var endNode = grid.getNodeAt(1,1);
+        for(c = 0; c < zombieaantal; c++) {
+            startx = Math.round(zombies[c].position.x * 10);
+            startz = Math.round(zombies[c].position.z * 10);
+            endx = Math.round(cube.position.x * 10);
+            endz = Math.round(cube.position.z * 10);
+            pathlist[c] = finder.findPath(startx, startz, endx, endz, grid);
+           // console.log(pathlist);
+            console.log(startx);
+            console.log(startz);
+        }
+    }
+     var Xindex = 2;
+    var Zindex = 2;
+    function walk(){
+        for(v = 0; v < zombieaantal; v++) {
+            if (counter == 0 && pathlist[v].length > 1) {
+                zombies[v].position.x = (pathlist[v][1][0]) / 10;
+                zombies[v].position.z = (pathlist[v][1][1]) / 10;
+                Xindex = 2;
+                Zindex = 2;
+            } else if (pathlist[v].length > 1) {
+                zombies[v].position.x = (pathlist[v][Xindex][0]) / 10;
+                zombies[v].position.z = (pathlist[v][Zindex][1]) / 10;
+                Xindex++;
+                Zindex++;
+            } else if (pathlist[v].length == 1) {
+                alert("gayyyyyyyyyy boi")
+            }
+        }
+            counter = 1;
+
+    }
+
+    function timer(){
+        setInterval(function(){
+            pathfinder();
+            counter = 0;
+        }, 1400);
+        setInterval(function(){
+            walk();
+
+        }, 700);
+    }
     function render(){
         requestAnimationFrame(render);
+
         renderer.render(scene, camera);
     }
+    zombiespawner();
+    //zombielist();
+    timer();
     render();
+
     $(document).keydown(function (e) {
         switch (e.which) {
             case 37: // left
@@ -108,6 +202,7 @@ gridXZ.position.x += 1;
         }
         e.preventDefault();
     });
+
 
  </script>
 </body>
