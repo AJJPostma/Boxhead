@@ -112,11 +112,11 @@
         scene.add(lazer);
         lazer.position.set(-10, 0, 0);
         cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+
+
         cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
-        cube3 = new THREE.Mesh(cubeGeometry, cubeMaterial3);
-        cube4 = new THREE.Mesh(cubeGeometry, cubeMaterial4);
-        cube5 = new THREE.Mesh(cubeGeometry, cubeMaterial5);
-        cube6 = new THREE.Mesh(cubeGeometry, cubeMaterial6);
+
         cube.position.set(0.1, 0, 0.1);
         //cube2.position.set(0.5, 0, 0.9);
 
@@ -137,17 +137,35 @@
         pointLight.position.set(0, 300, 200);
         scene.add(pointLight);
         function levelcalc() {
+            level++;
+            zombies = [];
+            zombieHealthList = [];
+            pathlist = [];
+            finderlist = [];
+            gridlist = [];
+            zombieaantal = 5;
+            spawnzombies = 0;
+            zombiespawner();
+            zombielist();
 
         }
         function zombiespawner() {
             zombieaantal = zombieaantal * level;
-
+            for(var i = 0; i < zombieaantal; i++) {
+                zombieHealthList[i] = 100;
+            }
+            if(zombieaantal > 50){
+                zombieaantal = 50;
+            }
         }
         var zombies = [];
         var finderlist = [];
         var gridlist = [];
         var zombieHealthList = [];
+        zombiespawner();
         zombielist();
+
+        var spawnzombies = 0;
         function zombielist() {
 
             //var minus = 0.0;
@@ -161,7 +179,7 @@
             //    scene.add(zombies[0]);
             //}
 
-            zombies[0] = cube2;
+           /* zombies[0] = cube2;
             zombies[0].position.set(1.9, 0, 1.9);
             scene.add(zombies[0])
 
@@ -179,16 +197,63 @@
 
             zombies[4] = cube6;
             zombies[4].position.set(1.5, 0, 1.5);
-            scene.add(zombies[4])
+            scene.add(zombies[4])*/
 
-            for (var i = 0; i < zombies.length; i++) {
+               var spawnpoint1 = setInterval(function () {
+                   if (spawnzombies >= zombieaantal - 2) {
+                       clearInterval(spawnpoint1)
+                   }
+                   finderlist[spawnzombies] = new PF.AStarFinder({
+                       allowDiagonal: true,
+                       dontCrossCorners: true
+                   });
+
+                   zombies[spawnzombies] = cube2.clone();
+                   zombies[spawnzombies].position.set(1.9, 0, 1.9);
+                   scene.add(zombies[spawnzombies])
+
+                   spawnzombies++;
+
+               }, 500);
+
+               var spawnpoint2 = setInterval(function () {
+                   if (spawnzombies >= zombieaantal - 2) {
+                       clearInterval(spawnpoint2)
+                   }
+                   finderlist[spawnzombies] = new PF.AStarFinder({
+                       allowDiagonal: true,
+                       dontCrossCorners: true
+                   });
+
+                   zombies[spawnzombies] = cube2.clone();
+                   zombies[spawnzombies].position.set(1.6, 0, 1.6);
+                   scene.add(zombies[spawnzombies])
+
+                   spawnzombies++;
+
+               }, 505);
+
+
+            /*for (var i = 0; i < zombieaantal; i++) {
                 finderlist[i] = new PF.AStarFinder({
                     allowDiagonal: true,
                     dontCrossCorners: true
                 });
-                zombieHealthList[i] = 100;
+                if(i % 2 ==0) {
+                    zombies[i] = cube2;
+                    zombies[i].position.set(1.9, 0, 1.9);
+                    scene.add(zombies[0])
+                    zombieHealthList[i] = 100;
 
-            }
+                }else{
+                    zombies[i] = cube2;
+                    zombies[i].position.set(1.6, 0, 1.6);
+                    scene.add(zombies[0])
+                    zombieHealthList[i] = 100;
+                }
+
+
+            }*/
 
 
 
@@ -292,7 +357,7 @@
                     if (Math.abs(lazer.position.x - zombies[c].position.x) < 0.1 && Math.abs(lazer.position.z - zombies[c].position.z) < 0.1) {
                         
                         lazer.position.x += 100;
-                        zombieHealthList[c] = zombieHealthList[c] - 20;
+                        zombieHealthList[c] = zombieHealthList[c] - 100;
                         console.log("zombie#"+c+" health: " + zombieHealthList[c])
                         score += 20;
                     }
@@ -302,6 +367,28 @@
                         zombies[c].position.x = -100;
                         zombies[c].position.y = -100;
                         zombies[c].position.z = -100;
+                         matrix = [
+                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                        ];
 
                     }
 
@@ -318,7 +405,7 @@
                 }
 
                 //When health reaches 0
-                if (health < 0) {
+                if (health <= 0) {
 
                     //sets losing screen image
                     var img = document.createElement("img");
@@ -330,7 +417,14 @@
                     img.style.left = "0px";
                     // This next line will just add it to the <body> tag
                     document.body.appendChild(img);
+                    zombies = [];
 
+                    pathlist = [];
+                    finderlist = [];
+                    gridlist = [];
+                    zombieaantal = 5;
+                    spawnzombies = 0;
+                    zombieHealthList[0] = 100;
                     //plays losing sound
                     if (playedLosingSound == 0) {
                         myAudio.pause();
@@ -351,7 +445,7 @@
                 renderer.render(scene, camera);
             }
         }
-        zombiespawner();
+
         //zombielist();
         timer();
         render();
@@ -415,7 +509,7 @@
             if (zombieHealthSum <= 0)
             {
 				levelUpSound.play();
-                alert("Need to build next level function here");
+               levelcalc();
             }
         }
 
