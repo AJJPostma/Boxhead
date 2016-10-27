@@ -28,8 +28,8 @@
       <file leaf-file-name="teachersurvival.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/teachersurvival.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="578">
-              <caret line="388" column="0" selection-start-line="388" selection-start-column="0" selection-end-line="388" selection-end-column="0" />
+            <state relative-caret-position="193">
+              <caret line="185" column="35" selection-start-line="185" selection-start-column="35" selection-end-line="185" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -62,8 +62,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="389" />
-    <option name="y" value="257" />
+    <option name="x" value="777" />
+    <option name="y" value="49" />
     <option name="width" value="1155" />
     <option name="height" value="1040" />
   </component>
@@ -232,15 +232,15 @@
       <workItem from="1477480242757" duration="8795000" />
       <workItem from="1477564927927" duration="8743000" />
       <workItem from="1477577059480" duration="292000" />
-      <workItem from="1477578033959" duration="3558000" />
+      <workItem from="1477578033959" duration="6620000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="35209000" />
+    <option name="totallyTimeSpent" value="38271000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="389" y="257" width="1155" height="1040" extended-state="0" />
+    <frame x="777" y="49" width="1155" height="1040" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22212467" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -503,8 +503,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/teachersurvival.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="388" column="0" selection-start-line="388" selection-start-column="0" selection-end-line="388" selection-end-column="0" />
+        <state relative-caret-position="193">
+          <caret line="185" column="35" selection-start-line="185" selection-start-column="35" selection-end-line="185" selection-end-column="35" />
           <folding />
         </state>
       </provider>

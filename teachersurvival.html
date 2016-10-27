@@ -137,8 +137,13 @@
         var cubeMaterial6 = new THREE.MeshLambertMaterial({color: 0xF0F0FF});
         var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
         var lazerarray = [];
-
+        var heal = new THREE.Mesh(cubeGeometry,lazerMaterial)
         scene.add(lazer);
+        var heal2 = heal.clone();
+        scene.add(heal);
+        scene.add(heal2);
+        heal.position.set(1.7,0,0.3);
+        heal2.position.set(0.3,0,1.7);
         lazer.position.set(-10, 0, 0);
         var barrel = new THREE.Mesh(cubeGeometry, cubeMaterial);
         scene.add(barrel);
@@ -167,6 +172,26 @@
         var pointLight = new THREE.PointLight(0xffffff);
         pointLight.position.set(0, 300, 200);
         scene.add(pointLight);
+        var healcount = 0;
+        var healcount2 = 0;
+        function healing(){
+            console.log("-------")
+            console.log(endx);
+            console.log(heal.position.x * 10);
+            console.log(endz);
+            console.log(heal.position.z * 10);
+            console.log("-------")
+            if(endx == heal.position.x * 10 && endz == heal.position.z * 10 && healcount == 0 && health < 100){
+                health = 100;
+                scene.remove(heal);
+                healcount = 1;
+            }
+            if(endx == heal2.position.x * 10 && endz == heal2.position.z * 10 && healcount2 == 0 && health < 100){
+                health = 100;
+                scene.remove(heal2);
+                healcount2 = 1;
+            }
+        }
         function levelcalc() {
             for(var i = 0; i <allbarrels.length; i++){
                 matrix[Math.round(allbarrels[i].position.z * 10)][Math.round(allbarrels[i].position.x * 10)] = 0;
@@ -184,6 +209,15 @@
             spawnzombies = 0;
             zombiespawner();
             zombielist();
+            if(healcount == 1){
+                scene.add(heal);
+                healcount = 0;
+            }
+            if(healcount2 == 1){
+                scene.add(heal2);
+                healcount = 0;
+            }
+
 
         }
 
@@ -458,7 +492,7 @@
 
 
 
-
+                healing();
                 setHealth();
                 setScore();
                 renderer.render(scene, camera);
