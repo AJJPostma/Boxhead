@@ -21,6 +21,7 @@
 <div id="gameInfo" style="display:none; position:absolute; color:white; left:500px; top: 10px;">
     <p id="score"></p>
     <p>Health:  <progress id="health" max="100"></progress> </p>
+    <p id="weapon"></p>
     <p>Use arrow keys to move</p>
     <p>Press space to shoot</p>
     <p>Use number keys to change weapon</p>
@@ -47,7 +48,9 @@
         var health = 100;
         var isPaused = 0;
         var currentWeapon = 1;
-
+        var weapon1 = true;
+        var weapon2;
+        weapondisplay();
         $(document).keydown(function (e) {
             switch (e.which) {
                 case 80: //p
@@ -79,6 +82,14 @@
 
         function setScore() {
             document.getElementById('score').innerHTML = "Score:" + score;
+        }
+        function weapondisplay(){
+            if(weapon1){
+                document.getElementById('weapon').innerHTML = " In Hand: lazer";
+            }
+            if(weapon2){
+                document.getElementById('weapon').innerHTML = "In Hand: tafel";
+            }
         }
 
         var scene, renderer, camera;
@@ -494,10 +505,16 @@
                     }
                     break;
                 case 49: //1
+                        weapon2 = false;
+                        weapon1 = true;
+                    weapondisplay();
                     currentWeapon = 1;
                     console.log(currentWeapon);
                     break;
                 case 50: //2
+                    weapon1 = false;
+                    weapon2 = true;
+                    weapondisplay();
                     currentWeapon = 2;
                     console.log(currentWeapon);
                     break;
