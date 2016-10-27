@@ -51,48 +51,6 @@
         var weapon1 = true;
         var weapon2;
         var allbarrels = [];
-        weapondisplay();
-        $(document).keydown(function (e) {
-            switch (e.which) {
-                case 80: //p
-                    setPause();
-                    break;
-                default:
-                    return;
-            }
-            e.preventDefault();
-        });
-
-        function setPause() {
-            if (isPaused == 0) {
-                isPaused = 1;
-                myAudio.pause();
-            }
-            else {
-                isPaused = 0;
-                myAudio.play();
-                render();
-            }
-        }
-
-        var playedLosingSound = 0;
-
-        function setHealth() {
-            document.getElementById('health').value = health;
-        }
-
-        function setScore() {
-            document.getElementById('score').innerHTML = "Score:" + score;
-        }
-        function weapondisplay(){
-            if(weapon1){
-                document.getElementById('weapon').innerHTML = " In Hand: lazer";
-            }
-            if(weapon2){
-                document.getElementById('weapon').innerHTML = "In Hand: tafel";
-            }
-        }
-
         var scene, renderer, camera;
         var cube;
         var playerDirection = 2;
@@ -120,10 +78,6 @@
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ];
-        renderer = new THREE.WebGLRenderer({antialias: true});
-        renderer.setSize(640, 480);
-        document.body.appendChild(renderer.domElement);
-
         scene = new THREE.Scene();
         var lazerDirection;
         var cubeGeometry = new THREE.BoxGeometry(0.05, 0.05, 0.05);
@@ -131,10 +85,6 @@
         var lazerMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
         var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x1ec876});
         var cubeMaterial2 = new THREE.MeshLambertMaterial({color: 0x0000FF});
-        var cubeMaterial3 = new THREE.MeshLambertMaterial({color: 0xFF00FF});
-        var cubeMaterial4 = new THREE.MeshLambertMaterial({color: 0xFF0000});
-        var cubeMaterial5 = new THREE.MeshLambertMaterial({color: 0x0F0F0F});
-        var cubeMaterial6 = new THREE.MeshLambertMaterial({color: 0xF0F0FF});
         var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
         var lazerarray = [];
         var heal = new THREE.Mesh(cubeGeometry,lazerMaterial)
@@ -154,7 +104,7 @@
         cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
 
         cube.position.set(0.1, 0, 0.1);
-        //cube2.position.set(0.5, 0, 0.9);
+
 
         scene.add(cube);
         var gridXZ = new THREE.GridHelper(1, 20, 0xff4040, 0x0000ff);
@@ -174,6 +124,77 @@
         scene.add(pointLight);
         var healcount = 0;
         var healcount2 = 0;
+        var playedLosingSound = 0;
+        var zombies = [];
+        var finderlist = [];
+        var gridlist = [];
+        var zombieHealthList = [];
+        var path;
+        var pathlist = [];
+        var startx = 0;
+        var startz = 0;
+        var endx = 0;
+        var endz = 0;
+        var spawnzombies = 0;
+        var isImmuneToDamge = 0;
+        var totalBarrels = 0;
+        var cooldown = 0;
+        //--------------------
+        weapondisplay();
+        zombiespawner();
+        zombielist();
+        pathfinder();
+        timer();
+
+
+        //--------------------
+        $(document).keydown(function (e) {
+            switch (e.which) {
+                case 80: //p
+                    setPause();
+                    break;
+                default:
+                    return;
+            }
+            e.preventDefault();
+        });
+
+        function setPause() {
+            if (isPaused == 0) {
+                isPaused = 1;
+                myAudio.pause();
+            }
+            else {
+                isPaused = 0;
+                myAudio.play();
+                render();
+            }
+        }
+
+
+
+        function setHealth() {
+            document.getElementById('health').value = health;
+        }
+
+        function setScore() {
+            document.getElementById('score').innerHTML = "Score:" + score;
+        }
+        function weapondisplay(){
+            if(weapon1){
+                document.getElementById('weapon').innerHTML = " In Hand: lazer";
+            }
+            if(weapon2){
+                document.getElementById('weapon').innerHTML = "In Hand: tafel";
+            }
+        }
+
+
+        renderer = new THREE.WebGLRenderer({antialias: true});
+        renderer.setSize(640, 480);
+        document.body.appendChild(renderer.domElement);
+
+
         function healing(){
             console.log("-------")
             console.log(endx);
@@ -231,47 +252,11 @@
             }
         }
 
-        var zombies = [];
-        var finderlist = [];
-        var gridlist = [];
-        var zombieHealthList = [];
-        zombiespawner();
-        zombielist();
 
-        var spawnzombies = 0;
+
+
 
         function zombielist() {
-
-            //var minus = 0.0;
-
-            //for (i = 0; i < zombies.length; i++)
-            //{
-            //    var mesh = new THREE.Mesh(cubeGeometry, cubeMaterial2);
-            //    minus = minus + (i / 10);
-            //    zombies[i] = mesh;
-            //    zombies[i].position.set((1.9-minus), 0, (1.9-minus));
-            //    scene.add(zombies[0]);
-            //}
-
-            /* zombies[0] = cube2;
-             zombies[0].position.set(1.9, 0, 1.9);
-             scene.add(zombies[0])
-
-             zombies[1] = cube3;
-             zombies[1].position.set(1.8, 0, 1.8);
-             scene.add(zombies[1])
-
-             zombies[2] = cube4;
-             zombies[2].position.set(1.7, 0, 1.7);
-             scene.add(zombies[2])
-
-             zombies[3] = cube5;
-             zombies[3].position.set(1.6, 0, 1.6);
-             scene.add(zombies[3])
-
-             zombies[4] = cube6;
-             zombies[4].position.set(1.5, 0, 1.5);
-             scene.add(zombies[4])*/
 
             var spawnpoint1 = setInterval(function () {
                 if (spawnzombies >= zombieaantal - 2) {
@@ -306,49 +291,12 @@
                 spawnzombies++;
 
             }, 505);
-            /*for (var i = 0; i < zombieaantal; i++) {
-                finderlist[i] = new PF.AStarFinder({
-                    allowDiagonal: true,
-                    dontCrossCorners: true
-                });
-                if(i % 2 ==0) {
-                    zombies[i] = cube2;
-                    zombies[i].position.set(1.9, 0, 1.9);
-                    scene.add(zombies[0])
-                    zombieHealthList[i] = 100;
 
-                }else{
-                    zombies[i] = cube2;
-                    zombies[i].position.set(1.6, 0, 1.6);
-                    scene.add(zombies[0])
-                    zombieHealthList[i] = 100;
-                }
-
-
-            }*/
-            /*
-                    for(b = 0; b < zombieaantal; b++)
-                    {
-                        zombies[b].position.x = (b / 2 ) + 0.5;
-                        zombies[b].position.z = (b / 2) + 0.5;
-                        zombies[b].position.y = 0;
-                    }
-            */
         }
 
-        var path;
-        var pathlist = [];
-        var startx = 0;
-        var startz = 0;
-        var endx = 0;
-        var endz = 0;
 
 
 
-        //var finder = new PF.AStarFinder({
-        //    allowDiagonal: true,
-        //    dontCrossCorners: true
-        //});
 
 
         function pathfinder() {
@@ -381,7 +329,7 @@
         }
 
 
-        pathfinder();
+
         function timer() {
             setInterval(function () {
                 pathfinder();
@@ -391,7 +339,7 @@
             }, 4000)
 
         }
-        var isImmuneToDamge = 0;
+
 
         //Start render function
         function render() {
@@ -499,11 +447,9 @@
             }
         }
 
-        //zombielist();
-        timer();
         render();
-        var totalBarrels = 0;
-        var cooldown = 0;
+        //zombielist();
+
         $(document).keydown(function (e) {
             switch (e.which) {
                 case 32: //space
