@@ -50,6 +50,7 @@
         var currentWeapon = 1;
         var weapon1 = true;
         var weapon2;
+        var allbarrels = [];
         weapondisplay();
         $(document).keydown(function (e) {
             switch (e.which) {
@@ -135,6 +136,8 @@
         var cubeMaterial5 = new THREE.MeshLambertMaterial({color: 0x0F0F0F});
         var cubeMaterial6 = new THREE.MeshLambertMaterial({color: 0xF0F0FF});
         var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
+        var lazerarray = [];
+
         scene.add(lazer);
         lazer.position.set(-10, 0, 0);
         var barrel = new THREE.Mesh(cubeGeometry, cubeMaterial);
@@ -165,6 +168,12 @@
         pointLight.position.set(0, 300, 200);
         scene.add(pointLight);
         function levelcalc() {
+            for(var i = 0; i <allbarrels.length; i++){
+                matrix[Math.round(allbarrels[i].position.z * 10)][Math.round(allbarrels[i].position.x * 10)] = 0;
+                scene.remove(allbarrels[i]);
+
+            }
+            totalBarrels = 0;
             level++;
             zombies = [];
             zombieHealthList = [];
@@ -356,6 +365,7 @@
             if (lazer.position.x > 2 || lazer.position.x < 0 || lazer.position.z > 2 || lazer.position.z < 0) {
                 lazer.position.x += 100;
                 lazer.position.z += 100;
+                cooldown = 0;
             }
 
 
@@ -383,6 +393,8 @@
                     if (Math.abs(lazer.position.x - zombies[c].position.x) < 0.1 && Math.abs(lazer.position.z - zombies[c].position.z) < 0.1) {
 
                         lazer.position.x += 100;
+                        lazer.position.z += 100;
+                        cooldown = 0;
                         zombieHealthList[c] = zombieHealthList[c] - 100;
                         console.log("zombie#" + c + " health: " + zombieHealthList[c])
                         score += 20;
@@ -457,22 +469,25 @@
         timer();
         render();
         var totalBarrels = 0;
-
+        var cooldown = 0;
         $(document).keydown(function (e) {
             switch (e.which) {
                 case 32: //space
-                    if (currentWeapon == 1) {
+                    if (currentWeapon == 1 && cooldown == 0) {
+                        cooldown = 1;
                         lazer.position.x = cube.position.x;
                         lazer.position.z = cube.position.z;
                         lazerDirection = playerDirection;
                         lazerSound.play();
                     }
-                    else if (currentWeapon == 2 && totalBarrels<5) {
-                        var newBarrel = barrel.clone();
-                        scene.add(newBarrel);
-                        newBarrel.position.x = cube.position.x;
-                        newBarrel.position.z = cube.position.z;
-                        matrix[Math.round(newBarrel.position.z * 10)][Math.round(newBarrel.position.x * 10)] = 1;
+                    else if (currentWeapon == 2 && totalBarrels<5 && matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10)] == 0) {
+
+                        allbarrels[totalBarrels] = barrel.clone();
+
+                        scene.add(allbarrels[totalBarrels]);
+                        allbarrels[totalBarrels].position.x = cube.position.x;
+                        allbarrels[totalBarrels].position.z = cube.position.z;
+                        matrix[Math.round(allbarrels[totalBarrels].position.z * 10)][Math.round(allbarrels[totalBarrels].position.x * 10)] = 1;
                         totalBarrels++;
                         barrelSound.play();
                     }
