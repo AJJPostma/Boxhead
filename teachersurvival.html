@@ -27,9 +27,10 @@
     <p>Use number keys to change weapon</p>
     <p>Press p to pause/unpause</p>
 </div>
-<div id="menu" >
-    <button id="knop" onclick="menu() ">menu</button>
-</div>
+
+
+    <img id="knop" src="images/SelectorScreen_StartAdventure_Highlight.png" onclick="menu()" style="padding-top: 15%; margin-left:40%;">
+
 <script>
     function menu() {
         document.getElementById("knop").style.display = "none";
@@ -84,7 +85,7 @@
         var lazerGeometry = new THREE.SphereGeometry(0.02, 8, 8);
         var lazerMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
         var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x1ec876});
-        var cubeMaterial2 = new THREE.MeshLambertMaterial({color: 0x0000FF});
+        var cubeMaterial2 = new THREE.MeshLambertMaterial({color: 0x228b22});
         var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
         var lazerarray = [];
         var heal = new THREE.Mesh(cubeGeometry,lazerMaterial)
@@ -103,7 +104,7 @@
 
         cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
 
-        cube.position.set(0.1, 0, 0.1);
+        cube.position.set(1, 0, 1);
 
 
         scene.add(cube);
@@ -139,6 +140,9 @@
         var isImmuneToDamge = 0;
         var totalBarrels = 0;
         var cooldown = 0;
+        var multi =2;
+        var healthdef = 100;
+       // var countlvl = 1;
         //--------------------
         weapondisplay();
         zombiespawner();
@@ -205,12 +209,16 @@
             if(endx == heal.position.x * 10 && endz == heal.position.z * 10 && healcount == 0 && health < 100){
                 health = 100;
                 scene.remove(heal);
-                healcount = 1;
+                if(health == 100) {
+                    healcount = 1;
+                }
             }
             if(endx == heal2.position.x * 10 && endz == heal2.position.z * 10 && healcount2 == 0 && health < 100){
                 health = 100;
                 scene.remove(heal2);
-                healcount2 = 1;
+                if(health == 100) {
+                    healcount2 = 1;
+                }
             }
         }
         function levelcalc() {
@@ -230,25 +238,35 @@
             spawnzombies = 0;
             zombiespawner();
             zombielist();
+
             if(healcount == 1){
                 scene.add(heal);
                 healcount = 0;
             }
             if(healcount2 == 1){
                 scene.add(heal2);
-                healcount = 0;
+                healcount2 = 0;
             }
+
 
 
         }
-
+        function healthmultiplier(){
+            if(zombieaantal > 50){
+                healthdef = 100
+                healthdef = healthdef * multi;
+                multi++;
+            }
+        }
         function zombiespawner() {
             zombieaantal = zombieaantal * level;
+            healthmultiplier();
             for (var i = 0; i < zombieaantal; i++) {
-                zombieHealthList[i] = 100;
+                zombieHealthList[i] = healthdef;
             }
             if (zombieaantal > 50) {
                 zombieaantal = 50;
+
             }
         }
 
@@ -285,7 +303,7 @@
                 });
 
                 zombies[spawnzombies] = cube2.clone();
-                zombies[spawnzombies].position.set(1.6, 0, 1.6);
+                zombies[spawnzombies].position.set(0.1, 0, 0.1);
                 scene.add(zombies[spawnzombies])
 
                 spawnzombies++;
