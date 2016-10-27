@@ -506,7 +506,7 @@
                     zombieHealthSum = 1;
                 }
             }
-            if (zombieHealthSum <= 0)
+            if (zombieHealthSum <= 0 && zombies.length > 0)
             {
 				levelUpSound.play();
                levelcalc();
