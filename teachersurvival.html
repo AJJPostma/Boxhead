@@ -11,28 +11,34 @@
 
     <script src="js/Detector.js"></script>
 
-    <script>
+
+
+
+    <title>Title</title>
+</head>
+<body style="overflow: hidden; background-color:black;">
+
+<div id="gameInfo" style="position:absolute; color:white; left:500px; top: 10px;">
+    <p id="score"></p>
+    <p>Health:  <progress id="health" max="100"></progress> </p>
+    <p>Use arrow keys to move</p>
+    <p>Press space to shoot</p>
+    <p>Use number keys to change weapon</p>
+    <p>Press p to pause/unpause</p>
+</div>
+<div id="menu" >
+    <button id="knop" onclick="menu() ">menu</button>
+</div>
+<script>
+    function menu() {
+        document.getElementById("knop").style.display = "none";
         myAudio = new Audio('sounds/background.ogg');
         myAudio.addEventListener('ended', function () {
             this.currentTime = 0;
             this.play();
         }, false);
         myAudio.volume = 0.5;
-        myAudio.play();</script>
-
-
-    <title>Title</title>
-</head>
-<body style="overflow: hidden; background-color:black;">
-    <div id="gameInfo" style="position:absolute; color:white; left:500px">
-        <p id="score"></p>
-        <p>Health:  <progress id="health" max="100"></progress> </p>
-        <p>Use arrow keys to move</p>
-        <p>Press space to shoot</p>
-        <p>Use number keys to change weapon</p>
-        <p>Press p to pause/unpause</p>
-    </div>
-    <script>
+        myAudio.play();
         var lazerSound = new Audio('sounds/lazer.wav');
         var levelUpSound = new Audio('sounds/levelUp.wav');
         var score = 0;
@@ -45,7 +51,8 @@
                 case 80: //p
                     setPause();
                     break;
-                default: return;
+                default:
+                    return;
             }
             e.preventDefault();
         });
@@ -61,41 +68,45 @@
                 render();
             }
         }
+
         var playedLosingSound = 0;
+
         function setHealth() {
             document.getElementById('health').value = health;
         }
+
         function setScore() {
             document.getElementById('score').innerHTML = "Score:" + score;
         }
+
         var scene, renderer, camera;
         var cube;
         var playerDirection = 2;
         var level = 1;
         var zombieaantal = 5;
         var matrix = [
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ];
-        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setSize(640, 480);
         document.body.appendChild(renderer.domElement);
 
@@ -103,13 +114,13 @@
         var lazerDirection;
         var cubeGeometry = new THREE.BoxGeometry(0.05, 0.05, 0.05);
         var lazerGeometry = new THREE.SphereGeometry(0.02, 8, 8);
-        var lazerMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
-        var cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x1ec876 });
-        var cubeMaterial2 = new THREE.MeshLambertMaterial({ color: 0x0000FF });
-        var cubeMaterial3 = new THREE.MeshLambertMaterial({ color: 0xFF00FF });
-        var cubeMaterial4 = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
-        var cubeMaterial5 = new THREE.MeshLambertMaterial({ color: 0x0F0F0F });
-        var cubeMaterial6 = new THREE.MeshLambertMaterial({ color: 0xF0F0FF });
+        var lazerMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
+        var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x1ec876});
+        var cubeMaterial2 = new THREE.MeshLambertMaterial({color: 0x0000FF});
+        var cubeMaterial3 = new THREE.MeshLambertMaterial({color: 0xFF00FF});
+        var cubeMaterial4 = new THREE.MeshLambertMaterial({color: 0xFF0000});
+        var cubeMaterial5 = new THREE.MeshLambertMaterial({color: 0x0F0F0F});
+        var cubeMaterial6 = new THREE.MeshLambertMaterial({color: 0xF0F0FF});
         var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
         scene.add(lazer);
         lazer.position.set(-10, 0, 0);
@@ -117,7 +128,6 @@
         scene.add(barrel);
         barrel.position.set(100, 0, 100);
         cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-
 
 
         cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
@@ -154,6 +164,7 @@
             zombielist();
 
         }
+
         function zombiespawner() {
             zombieaantal = zombieaantal * level;
             for (var i = 0; i < zombieaantal; i++) {
@@ -163,6 +174,7 @@
                 zombieaantal = 50;
             }
         }
+
         var zombies = [];
         var finderlist = [];
         var gridlist = [];
@@ -171,6 +183,7 @@
         zombielist();
 
         var spawnzombies = 0;
+
         function zombielist() {
 
             //var minus = 0.0;
@@ -237,8 +250,6 @@
                 spawnzombies++;
 
             }, 505);
-
-
             /*for (var i = 0; i < zombieaantal; i++) {
                 finderlist[i] = new PF.AStarFinder({
                     allowDiagonal: true,
@@ -259,9 +270,6 @@
 
 
             }*/
-
-
-
             /*
                     for(b = 0; b < zombieaantal; b++)
                     {
@@ -416,6 +424,7 @@
                         myAudio.currentTime = 0;
                         var LosingSound = new Audio('sounds/lose.wav');
 
+
                         LosingSound.play();
                         playedLosingSound = 1;
                     }
@@ -500,6 +509,9 @@
         function checkZombiesHealth() {
             var zombieHealthSum = 0;
             for (var i = 0; i < zombies.length; i++) {
+                if(zombieHealthList[i] <= 0){
+                    scene.remove(zombies[i]);
+                }
                 if (zombies[i].position.y == -100) {
                     zombieHealthList[i] = 0;
                 }
@@ -507,13 +519,15 @@
                     zombieHealthSum = 1;
                 }
             }
-            if (zombieHealthSum <= 0 && zombies.length > 0) {
+            if (
+
+                    zombieHealthSum <= 0 && zombies.length > 0) {
                 levelUpSound.play();
                 levelcalc();
             }
         }
 
-
+}
 
 
 
