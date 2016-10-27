@@ -18,7 +18,7 @@
 </head>
 <body style="overflow: hidden; background-color:black;">
 
-<div id="gameInfo" style="position:absolute; color:white; left:500px; top: 10px;">
+<div id="gameInfo" style="display:none; position:absolute; color:white; left:500px; top: 10px;">
     <p id="score"></p>
     <p>Health:  <progress id="health" max="100"></progress> </p>
     <p>Use arrow keys to move</p>
@@ -32,6 +32,7 @@
 <script>
     function menu() {
         document.getElementById("knop").style.display = "none";
+        document.getElementById("gameInfo").style.display = "block";
         myAudio = new Audio('sounds/background.ogg');
         myAudio.addEventListener('ended', function () {
             this.currentTime = 0;
@@ -41,6 +42,7 @@
         myAudio.play();
         var lazerSound = new Audio('sounds/lazer.wav');
         var levelUpSound = new Audio('sounds/levelUp.wav');
+        var barrelSound = new Audio('sounds/barrel.wav');
         var score = 0;
         var health = 100;
         var isPaused = 0;
@@ -461,6 +463,7 @@
                         newBarrel.position.z = cube.position.z;
                         matrix[Math.round(newBarrel.position.z * 10)][Math.round(newBarrel.position.x * 10)] = 1;
                         totalBarrels++;
+                        barrelSound.play();
                     }
                     break;
                 case 37: // left
