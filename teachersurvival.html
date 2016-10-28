@@ -55,9 +55,13 @@
         var allbarrels = [];
         var scene, renderer, camera;
         var cube;
-        var playerDirection = 2;
+        var playerDirection = 3;
         var level = 1;
         var zombieaantal = 5;
+        var left = false;
+        var up = false;
+        var right = false;
+        var down = false;
         var matrix = [
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -83,13 +87,19 @@
         scene = new THREE.Scene();
         var lazerDirection;
         var cubeGeometry = new THREE.BoxGeometry(0.05, 0.05, 0.05);
+        var legG = new THREE.BoxGeometry(0.05, 0.1,0.05);
         var lazerGeometry = new THREE.SphereGeometry(0.02, 8, 8);
         var lazerMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
         var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x1ec876});
         var cubeMaterial2 = new THREE.MeshLambertMaterial({color: 0x228b22});
         var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
         var lazerarray = [];
-        var heal = new THREE.Mesh(cubeGeometry,lazerMaterial)
+        var heal = new THREE.Mesh(cubeGeometry,lazerMaterial);
+        var leg = new THREE.Mesh(legG, lazerMaterial);
+        var chestG = new THREE.BoxGeometry(0.12,0.15,0.055);
+        var Chest = new THREE.Mesh(chestG, lazerMaterial);
+        var armG = new THREE.BoxGeometry(0.05,0.05,0.1);
+        var arm = new THREE.Mesh(armG, lazerMaterial);
         scene.add(lazer);
         var heal2 = heal.clone();
         scene.add(heal);
@@ -104,11 +114,23 @@
 
 
         cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
+        legleft = leg.clone();
 
         cube.position.set(1, 0, 1);
-
+        leg.position.x += 0.03;
+        legleft.position.x += -0.03;
+        leg.position.y += 0.05;
+        legleft.position.y += 0.05;
+        Chest.position.y += 0.15;
+        arm.position.x -= 0.1;
+        arm.position.z += 0.03;
 
         scene.add(cube);
+        cube.add(Chest);
+        cube.add(leg);
+        Chest.add(arm);
+        cube.add(legleft);
+
         var gridXZ = new THREE.GridHelper(1, 20, 0xff4040, 0x0000ff);
         gridXZ.position.x += 1;
         gridXZ.position.z += 1;
@@ -117,8 +139,8 @@
         camera = new THREE.PerspectiveCamera(45, 640 / 480, 0.1, 10000);
         camera.position.y = 3;
         camera.position.x += 1.5;
-        camera.rotation.x = -0.9;
-        camera.position.z += 2;
+        //camera.rotation.x = -0.7;
+        camera.position.z += 3;
         camera.lookAt(new THREE.Vector3(1.5, 0, 1));
 
         var pointLight = new THREE.PointLight(0xffffff);
@@ -201,12 +223,12 @@
 
 
         function healing(){
-            console.log("-------")
+          /*  console.log("-------")
             console.log(endx);
             console.log(heal.position.x * 10);
             console.log(endz);
             console.log(heal.position.z * 10);
-            console.log("-------")
+            console.log("-------")*/
             if(endx == heal.position.x * 10 && endz == heal.position.z * 10 && healcount == 0 && health < 100){
                 health = 100;
                 scene.remove(heal);
@@ -291,6 +313,7 @@
                 zombies[spawnzombies].position.set(1.9, 0, 1.9);
                 scene.add(zombies[spawnzombies])
 
+                //zombies[spawnzombies].lookAt(new THREE.Vector3(endx,0,endz));
                 spawnzombies++;
 
             }, 500);
@@ -307,7 +330,7 @@
                 zombies[spawnzombies] = cube2.clone();
                 zombies[spawnzombies].position.set(0.1, 0, 0.1);
                 scene.add(zombies[spawnzombies])
-
+                //zombies[spawnzombies].lookAt(new THREE.Vector3(endx,0,endz));
                 spawnzombies++;
 
             }, 505);
@@ -338,6 +361,8 @@
                         zombies[c].position.x = (pathlist[c][1][0]) / 10;
                         zombies[c].position.z = (pathlist[c][1][1]) / 10;
 
+                            zombies[c].lookAt(new THREE.Vector3(cube.position.x,0,cube.position.z));
+
                         matrix[pathlist[c][1][1]][pathlist[c][1][0]] = 1;
                     }
 
@@ -353,17 +378,61 @@
         function timer() {
             setInterval(function () {
                 pathfinder();
-            }, 700);
+                console.log(lazerDirection);
+            }, 500);
             setInterval(function () {
                 checkZombiesHealth();
             }, 4000)
+           /* setInterval(function () {
+                eightway();
 
+            }, 80);
+*/
         }
+       /* function eightway(){
+            if(left && up){
+                cube.position.x -= 0.1;
+                cube.position.z -= 0.1;
+                cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
+            }
+            if(up && right){
+                cube.position.x += 0.1;
+                cube.position.z -= 0.1;
+                cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
+            }
+            if(right && down){
+                cube.position.x += 0.1;
+                cube.position.z += 0.1;
+                cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
+            }
+            if(down && left){
+                cube.position.x -= 0.1;
+                cube.position.z += 0.1;
+                cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
+            }
+            if(left){
+                cube.position.x -= 0.1;
+                cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z));
+            }
+            if(up){
+                cube.position.z -= 0.1;
+                cube.lookAt(new THREE.Vector3(cube.position.x ,0,cube.position.z - 1));
+            }
+            if(right){
+                cube.position.x += 0.1;
+                cube.lookAt(new THREE.Vector3(cube.position.x + 1,0,cube.position.z));
+            }
+            if(down){
+                cube.position.z += 0.1;
+                cube.lookAt(new THREE.Vector3(cube.position.x ,0,cube.position.z +1));
+            }
 
+
+        }*/
 
         //Start render function
         function render() {
-
+            //eightway()
             if (lazer.position.x > 2 || lazer.position.x < 0 || lazer.position.z > 2 || lazer.position.z < 0) {
                 lazer.position.x += 100;
                 lazer.position.z += 100;
@@ -495,28 +564,72 @@
                 case 37: // left
                     playerDirection = 4;
                     if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) - 1]) == 0) {
+                        left = true;
+                        if(left && up){
+                            cube.position.x -= 0.1;
+                            cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
+                        }else  if(down && left){
+                            cube.position.x -= 0.1;
+                            cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
+                        }else{
                         cube.position.x -= 0.1;
+                        cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z));}
                     }
                     break;
 
                 case 38: // up
                     playerDirection = 1;
                     if ((matrix[Math.round(cube.position.z * 10) - 1][Math.round(cube.position.x * 10)]) == 0) {
+                        up = true;
+                        if(up && right){
+                            cube.position.x += 0.1;
+                            cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
+                        }else if(left && up){
+                            cube.position.x -= 0.1;
+                            cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
+                        }else{
                         cube.position.z -= 0.1;
+                        cube.lookAt(new THREE.Vector3(cube.position.x ,0,cube.position.z - 1));}
                     }
                     break;
 
                 case 39: // right
                     playerDirection = 2;
                     if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) + 1]) == 0) {
+                        right = true;
+                        if(right && down){
+                            cube.position.x += 0.1;
+                            cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
+                        }else if(up && right){
+                            cube.position.x += 0.1;
+                            cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
+                        }else{
                         cube.position.x += 0.1;
+                        cube.lookAt(new THREE.Vector3(cube.position.x + 1,0,cube.position.z));}
                     }
                     break;
 
                 case 40: // down
                     playerDirection = 3;
                     if ((matrix[Math.round(cube.position.z * 10) + 1][Math.round(cube.position.x * 10)]) == 0) {
+                        down = true;
+                        if(right && down){
+                            cube.position.x += 0.1;
+                            cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
+                        }else  if(down && left){
+                            cube.position.x -= 0.1;
+                            cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
+                        }else {
                         cube.position.z += 0.1;
+                        cube.lookAt(new THREE.Vector3(cube.position.x ,0,cube.position.z +1));}
                     }
                     break;
                 case 49: //1
@@ -536,6 +649,37 @@
 
 
 
+                default: return;
+            }
+            e.preventDefault();
+        });
+        $(document).keyup(function (e) {
+            switch (e.which) {
+                case 37: // left
+
+                    left = false;
+
+
+                    break;
+
+                case 38: // up
+
+                    up = false;
+
+
+                    break;
+
+                case 39: // right
+
+                    right = false;
+
+                    break;
+
+                case 40: // down
+
+                    down = false;
+
+                    break;
                 default: return;
             }
             e.preventDefault();
