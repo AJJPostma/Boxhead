@@ -8,7 +8,7 @@
     <script src="js/pathfinding-browser.min.js"></script>
     <script src="js/MTLLoader.js"></script>
     <script src="js/OBJLoader.js"></script>
-
+    <script src="js/OrbitControls.js"></script>
     <script src="js/Detector.js"></script>
 
 
@@ -18,15 +18,21 @@
 </head>
 <body style="overflow: hidden; background-color:black; width: 100%; height: 100%; position: absolute;">
 
-<div id="gameInfo" style="display:none; position:absolute; color:white; left:500px; top: 10px;">
-    <p id="score"></p>
-    <p>Health:  <progress id="health" max="100"></progress> </p>
-    <p id="weapon"></p>
-    <p>Use arrow keys to move</p>
-    <p>Press space to shoot</p>
-    <p>Use number keys to change weapon</p>
-    <p>Press p to pause/unpause</p>
-    <p id="warning"></p>
+<div id="gameInfo" style="display:none; position:absolute; color:white; left:150px; top: 200px; width: 1000px; height: 20%;">
+    <div id="stats" style="position: relative; width: 333px; float: left;">
+        <p>Health:  <progress id="health" max="100"></progress> </p>
+        <p id="weapon"></p>
+        <p id="warning"></p>
+    </div>
+    <div id="scoreboard" style="position: relative; width: 333px; float: left;">
+        <p id="score" ></p>
+    </div>
+    <div id="info" style=" position: relative; width: 333px; float: left;">
+        <p>Use arrow keys to move</p>
+        <p>Press space to shoot</p>
+        <p>Use number keys to change weapon</p>
+        <p>Press p to pause/unpause</p>
+    </div>
 </div>
 
 
@@ -63,26 +69,30 @@
         var right = false;
         var down = false;
         var matrix = [
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ];
         scene = new THREE.Scene();
         var lazerDirection;
@@ -90,7 +100,7 @@
         var legG = new THREE.BoxGeometry(0.05, 0.1,0.05);
         var lazerGeometry = new THREE.SphereGeometry(0.02, 8, 8);
         var lazerMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
-        var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x1ec876});
+        var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x1ec876, transparent: true});
         var cubeMaterial2 = new THREE.MeshLambertMaterial({color: 0x228b22});
         var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
         var lazerarray = [];
@@ -104,9 +114,9 @@
         var heal2 = heal.clone();
         scene.add(heal);
         scene.add(heal2);
-        heal.position.set(1.7,0,0.3);
-        heal2.position.set(0.3,0,1.7);
-        lazer.position.set(-10, 0, 0);
+        heal.position.set(2,0,0.3);
+        heal2.position.set(0.3,0,2);
+        lazer.position.set(-10, 0.1, 0);
         var barrel = new THREE.Mesh(cubeGeometry, cubeMaterial);
         scene.add(barrel);
         barrel.position.set(100, 0, 100);
@@ -116,13 +126,13 @@
         cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
         legleft = leg.clone();
 
-        cube.position.set(1, 0, 1);
+        cube.position.set(1.2, 0, 1.2);
         leg.position.x += 0.03;
         legleft.position.x += -0.03;
         leg.position.y += 0.05;
         legleft.position.y += 0.05;
         Chest.position.y += 0.15;
-        arm.position.x -= 0.1;
+        arm.position.x -= 0.08;
         arm.position.z += 0.03;
 
         scene.add(cube);
@@ -130,18 +140,26 @@
         cube.add(leg);
         Chest.add(arm);
         cube.add(legleft);
+        var groundG = new THREE.BoxGeometry(2.9,0.1,2.9);
+        var groundmat = new THREE.MeshLambertMaterial({color: 0xab775f });
+        var ground  = new THREE.Mesh(groundG, groundmat);
+        ground.position.y = -0.5;
+        ground.position.x = 1.2;
+        ground.position.z = 0.4;
+        scene.add(ground);
 
-        var gridXZ = new THREE.GridHelper(1, 20, 0xff4040, 0x0000ff);
-        gridXZ.position.x += 1;
-        gridXZ.position.z += 1;
-        scene.add(gridXZ);
+       // var gridXZ = new THREE.GridHelper(1, 24, 0xff4040, 0x0000ff);
+      //  gridXZ.position.x += 1.4;
+       // gridXZ.position.z += 1.4;
+       // scene.add(gridXZ);
 
-        camera = new THREE.PerspectiveCamera(45, 640 / 480, 0.1, 10000);
-        camera.position.y = 3;
-        camera.position.x += 1.5;
-        //camera.rotation.x = -0.7;
-        camera.position.z += 3;
-        camera.lookAt(new THREE.Vector3(1.5, 0, 1));
+        camera = new THREE.PerspectiveCamera(45, 1000 / 1000, 0.1, 10000);
+
+        camera.position.x = 1.029638987050593;
+        camera.position.y = 2.206529389343555;
+        camera.position.z = 4.930110277975688;
+        camera.rotation.x = -0.4979420367530185;
+
 
         var pointLight = new THREE.PointLight(0xffffff);
         pointLight.position.set(0, 300, 200);
@@ -218,9 +236,14 @@
 
 
         renderer = new THREE.WebGLRenderer({antialias: true});
-        renderer.setSize(640, 480);
+        renderer.setSize(1000, 1000);
         document.body.appendChild(renderer.domElement);
+        /*controls = new THREE.OrbitControls(camera, renderer.domElement);
 
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
+        controls.enableZoom = true;
+*/
 
         function healing(){
           /*  console.log("-------")
@@ -378,10 +401,14 @@
         function timer() {
             setInterval(function () {
                 pathfinder();
-                console.log(lazerDirection);
+
             }, 500);
             setInterval(function () {
                 checkZombiesHealth();
+                /*console.log(camera.position.x);
+                console.log(camera.position.y);
+                console.log(camera.position.z);
+                console.log(camera.rotation.x);*/
             }, 4000)
            /* setInterval(function () {
                 eightway();
@@ -433,7 +460,7 @@
         //Start render function
         function render() {
             //eightway()
-            if (lazer.position.x > 2 || lazer.position.x < 0 || lazer.position.z > 2 || lazer.position.z < 0) {
+            if (lazer.position.x > 2.4 || lazer.position.x < 0 || lazer.position.z > 2.4 || lazer.position.z < 0) {
                 lazer.position.x += 100;
                 lazer.position.z += 100;
                 cooldown = 0;
@@ -452,9 +479,29 @@
             else if (lazerDirection == 4) {
                 lazer.position.x -= 0.1;
             }
+            else if (lazerDirection == 5) {
+                lazer.position.x -= 0.1;
+                lazer.position.z -= 0.1;
+            }
+            else if (lazerDirection == 6) {
+                lazer.position.x += 0.1;
+                lazer.position.z -= 0.1;
+            }
+            else if (lazerDirection == 7) {
+                lazer.position.x += 0.1;
+                lazer.position.z += 0.1;
+            }
+            else if (lazerDirection == 8) {
+                lazer.position.x -= 0.1;
+                lazer.position.z += 0.1;
+            }
 
             if (isPaused == 0) {
-                requestAnimationFrame(render);
+                setTimeout( function() {
+
+                    requestAnimationFrame( render );
+
+                }, 1000 / 60 );
                 isImmuneToDamge = 0;
 
 
@@ -467,7 +514,7 @@
                         lazer.position.z += 100;
                         cooldown = 0;
                         zombieHealthList[c] = zombieHealthList[c] - 100;
-                        console.log("zombie#" + c + " health: " + zombieHealthList[c])
+                       // console.log("zombie#" + c + " health: " + zombieHealthList[c])
                         score += 20;
                     }
 
@@ -489,7 +536,7 @@
                     //If zombie touches player
                     if (zombiePosX == playerPosX && zombiePosZ == playerPosZ && isImmuneToDamge == 0) {
                         health--;
-                        console.log(health);
+                        //console.log(health);
                     }
                 }
 
@@ -503,7 +550,9 @@
                     img.height = 480;
                     img.alt = "You lost";
                     img.style.position = "absolute";
-                    img.style.left = "0px";
+                    img.style.left = "30%";
+                    img.style.top = "100px";
+
                     // This next line will just add it to the <body> tag
                     document.body.appendChild(img);
                     zombies = [];
@@ -514,6 +563,12 @@
                     zombieaantal = 5;
                     spawnzombies = 0;
                     zombieHealthList[0] = 100;
+                    //document.getElementById('gameinfo').style.display = "none";
+                    document.getElementById("gameInfo").style.display = "none";
+                    for( var rem = scene.children.length - 1; rem >= 0; rem--){
+                        obj = scene.children[rem];
+                        scene.remove(obj);
+                    }
                     //plays losing sound
                     if (playedLosingSound == 0) {
                         myAudio.pause();
@@ -523,7 +578,9 @@
 
                         LosingSound.play();
                         playedLosingSound = 1;
+                        window.setTimeout(reloadpage,5000);
                     }
+
 
                 }
 
@@ -532,13 +589,17 @@
                 healing();
                 setHealth();
                 setScore();
+                //controls.update();
                 renderer.render(scene, camera);
+
             }
         }
 
         render();
         //zombielist();
-
+        function reloadpage(){
+            window.location.reload();
+        }
         $(document).keydown(function (e) {
             switch (e.which) {
                 case 32: //space
@@ -562,72 +623,84 @@
                     }
                     break;
                 case 37: // left
-                    playerDirection = 4;
+
                     if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) - 1]) == 0) {
                         left = true;
                         if(left && up){
+                            playerDirection=5;
                             cube.position.x -= 0.1;
                             cube.position.z -= 0.1;
                             cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
                         }else  if(down && left){
+                            playerDirection= 8;
                             cube.position.x -= 0.1;
                             cube.position.z += 0.1;
                             cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
                         }else{
+                            playerDirection = 4;
                         cube.position.x -= 0.1;
                         cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z));}
                     }
                     break;
 
                 case 38: // up
-                    playerDirection = 1;
+
                     if ((matrix[Math.round(cube.position.z * 10) - 1][Math.round(cube.position.x * 10)]) == 0) {
                         up = true;
                         if(up && right){
+                            playerDirection= 6;
                             cube.position.x += 0.1;
                             cube.position.z -= 0.1;
                             cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
                         }else if(left && up){
+                            playerDirection=5;
                             cube.position.x -= 0.1;
                             cube.position.z -= 0.1;
                             cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
                         }else{
+                            playerDirection = 1;
                         cube.position.z -= 0.1;
                         cube.lookAt(new THREE.Vector3(cube.position.x ,0,cube.position.z - 1));}
                     }
                     break;
 
                 case 39: // right
-                    playerDirection = 2;
+
                     if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) + 1]) == 0) {
                         right = true;
                         if(right && down){
+                            playerDirection=7;
                             cube.position.x += 0.1;
                             cube.position.z += 0.1;
                             cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
                         }else if(up && right){
+                            playerDirection=6;
                             cube.position.x += 0.1;
                             cube.position.z -= 0.1;
                             cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
                         }else{
+                            playerDirection = 2;
                         cube.position.x += 0.1;
                         cube.lookAt(new THREE.Vector3(cube.position.x + 1,0,cube.position.z));}
                     }
                     break;
 
                 case 40: // down
-                    playerDirection = 3;
+
                     if ((matrix[Math.round(cube.position.z * 10) + 1][Math.round(cube.position.x * 10)]) == 0) {
                         down = true;
                         if(right && down){
+                            playerDirection=7;
                             cube.position.x += 0.1;
                             cube.position.z += 0.1;
                             cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
                         }else  if(down && left){
+                            playerDirection=8;
                             cube.position.x -= 0.1;
                             cube.position.z += 0.1;
                             cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
                         }else {
+                            playerDirection = 3;
                         cube.position.z += 0.1;
                         cube.lookAt(new THREE.Vector3(cube.position.x ,0,cube.position.z +1));}
                     }
@@ -637,14 +710,14 @@
                         weapon1 = true;
                     weapondisplay();
                     currentWeapon = 1;
-                    console.log(currentWeapon);
+                   // console.log(currentWeapon);
                     break;
                 case 50: //2
                     weapon1 = false;
                     weapon2 = true;
                     weapondisplay();
                     currentWeapon = 2;
-                    console.log(currentWeapon);
+                    //console.log(currentWeapon);
                     break;
 
 
