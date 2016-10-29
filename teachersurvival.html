@@ -103,6 +103,7 @@
         var lazerMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
         var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x1ec876, transparent:true,opacity: 0});
         var cubeMaterial2 = new THREE.MeshLambertMaterial({color: 0x228b22, transparent:true,opacity: 0});
+        var barrelmat = new THREE.MeshLambertMaterial({color: 0x1ec876});
         var zombiechestmat = new THREE.MeshLambertMaterial({color: 0x228b22});
         var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
         var lazerarray = [];
@@ -122,7 +123,7 @@
         heal.position.set(2,0,0.3);
         heal2.position.set(0.3,0,2);
         lazer.position.set(-10, 0.1, 0);
-        var barrel = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        var barrel = new THREE.Mesh(cubeGeometry, barrelmat);
         scene.add(barrel);
         barrel.position.set(100, 0, 100);
         cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
