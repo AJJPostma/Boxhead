@@ -101,8 +101,8 @@
         var legG = new THREE.BoxGeometry(0.05, 0.1,0.05);
         var lazerGeometry = new THREE.SphereGeometry(0.02, 8, 8);
         var lazerMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
-        var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x1ec876, transparent: true});
-        var cubeMaterial2 = new THREE.MeshLambertMaterial({color: 0x228b22});
+        var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x1ec876, transparent:true,opacity: 0});
+        var cubeMaterial2 = new THREE.MeshLambertMaterial({color: 0x228b22, transparent:true,opacity: 0});
         var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
         var lazerarray = [];
         var heal = new THREE.Mesh(cubeGeometry,lazerMaterial);
@@ -110,7 +110,10 @@
         var chestG = new THREE.BoxGeometry(0.12,0.15,0.055);
         var Chest = new THREE.Mesh(chestG, lazerMaterial);
         var armG = new THREE.BoxGeometry(0.05,0.05,0.1);
+        var armG2 = new THREE.BoxGeometry(0.05,0.1,0.05);
         var arm = new THREE.Mesh(armG, lazerMaterial);
+        var arm2 = new THREE.Mesh(armG2, lazerMaterial);
+        var zombiechest = new THREE.Mesh(chestG, cubeMaterial2);
         scene.add(lazer);
         var heal2 = heal.clone();
         scene.add(heal);
@@ -124,8 +127,10 @@
         cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
 
+
         cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
-        legleft = leg.clone();
+        var legleft = leg.clone();
+
 
         cube.position.set(1.2, 0, 1.2);
         leg.position.x += 0.03;
@@ -135,12 +140,17 @@
         Chest.position.y += 0.15;
         arm.position.x -= 0.08;
         arm.position.z += 0.03;
-
+        arm.position.y += 0.02;
+        arm2.position.x += 0.08;
         scene.add(cube);
         cube.add(Chest);
         cube.add(leg);
         Chest.add(arm);
+        Chest.add(arm2);
         cube.add(legleft);
+
+
+
         var groundG = new THREE.BoxGeometry(2.9,0.1,2.9);
         var groundmat = new THREE.MeshLambertMaterial({color: 0xab775f });
         var ground  = new THREE.Mesh(groundG, groundmat);
@@ -431,7 +441,31 @@
 
                 zombies[spawnzombies] = cube2.clone();
                 zombies[spawnzombies].position.set(1.9, 0, 1.9);
+                var zombiearm = arm.clone();
+                var zombiearm2 = zombiearm.clone();
+                var zombieleg = leg.clone();
+                var zombielegleft = legleft.clone();
+                var zombiechest2 = zombiechest.clone();
                 scene.add(zombies[spawnzombies])
+                zombies[spawnzombies].add(zombiechest2);
+                zombies[spawnzombies].add(zombieleg);
+                zombiechest2.add(zombiearm);
+                zombiechest2.add(zombiearm2);
+                //Chest.add(arm2);
+                zombies[spawnzombies].add(zombielegleft);
+                zombieleg.position.x += 0.005;
+                zombielegleft.position.x += -0.005;
+                zombieleg.position.y -= 0.01;
+                zombielegleft.position.y -= 0.01;
+                zombiechest2.position.y += 0.15;
+                //zombiearm.position.x -= 0.08;
+                zombiearm.position.z += 0.03;
+                zombiearm.position.y += 0.02;
+                zombiearm2.position.x += 0.16;
+                zombiearm2.position.z += 0.03;
+                zombiearm2.position.y += 0.02;
+
+
 
                 //zombies[spawnzombies].lookAt(new THREE.Vector3(endx,0,endz));
                 spawnzombies++;
@@ -449,7 +483,29 @@
 
                 zombies[spawnzombies] = cube2.clone();
                 zombies[spawnzombies].position.set(0.1, 0, 0.1);
+                var zombiearm = arm.clone();
+                var zombiearm2 = zombiearm.clone();
+                var zombieleg = leg.clone();
+                var zombielegleft = legleft.clone();
+                var zombiechest2 = zombiechest.clone();
                 scene.add(zombies[spawnzombies])
+                zombies[spawnzombies].add(zombiechest2);
+                zombies[spawnzombies].add(zombieleg);
+                zombiechest2.add(zombiearm);
+                zombiechest2.add(zombiearm2);
+                //Chest.add(arm2);
+                zombies[spawnzombies].add(zombielegleft);
+                zombieleg.position.x += 0.005;
+                zombielegleft.position.x += -0.005;
+                zombieleg.position.y -= 0.01;
+                zombielegleft.position.y -= 0.01;
+                zombiechest2.position.y += 0.15;
+                //zombiearm.position.x -= 0.08;
+                zombiearm.position.z += 0.03;
+                zombiearm.position.y += 0.02;
+                zombiearm2.position.x += 0.16;
+                zombiearm2.position.z += 0.03;
+                zombiearm2.position.y += 0.02;
                 //zombies[spawnzombies].lookAt(new THREE.Vector3(endx,0,endz));
                 spawnzombies++;
 
