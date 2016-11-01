@@ -1,0 +1,6 @@
+Add rocket stuff (look for rocket edit)
+
+Rename cooldown variable to lazerCooldown
+
+Remove weapon1, weapon2 etc and use currentWeapon
+

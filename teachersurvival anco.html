@@ -1,0 +1,918 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <script src="js/three.min.js"></script>
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/pathfinding-browser.min.js"></script>
+    <script src="js/MTLLoader.js"></script>
+    <script src="js/OBJLoader.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script src="js/Detector.js"></script>
+
+
+
+
+    <title>Title</title>
+</head>
+<body style="overflow: hidden; background-color:black; width: 100%; height: 100%; position: absolute;">
+
+    <div id="gameInfo" style="display:none; position:absolute; color:white; left:150px; top: 200px; width: 1000px; height: 20%;">
+        <div id="stats" style="position: relative; width: 333px; float: left;">
+            <p>Health:  <progress id="health" max="100"></progress> </p>
+            <p id="weapon"></p>
+            <p id="warning"></p>
+        </div>
+        <div id="scoreboard" style="position: relative; width: 333px; float: left;">
+            <p id="score"></p>
+        </div>
+        <div id="info" style=" position: relative; width: 333px; float: left;">
+            <p>Use arrow keys to move</p>
+            <p>Press space to shoot</p>
+            <p>Use number keys to change weapon</p>
+            <p>Press p to pause/unpause</p>
+        </div>
+    </div>
+
+
+    <img id="knop" src="images/SelectorScreen_StartAdventure_Highlight.png" onclick="menu()" style="top:30%; left:40%; position: relative;">
+
+    <script>
+        function menu() {
+            document.getElementById("knop").style.display = "none";
+            document.getElementById("gameInfo").style.display = "block";
+            myAudio = new Audio('sounds/background.ogg');
+            myAudio.addEventListener('ended', function () {
+                this.currentTime = 0;
+                this.play();
+            }, false);
+            myAudio.volume = 0.5;
+            myAudio.play();
+            var lazerSound = new Audio('sounds/lazer.wav');
+            var levelUpSound = new Audio('sounds/levelUp.wav');
+            var barrelSound = new Audio('sounds/barrel.wav');
+            var score = 0;
+            var health = 100;
+            var isPaused = 0;
+            var currentWeapon = 1;
+            var weapon1 = true;
+            var weapon2;
+            var weapon3;
+            var allbarrels = [];
+            var scene, renderer, camera;
+            var cube;
+            var playerDirection = 3;
+            var level = 1;
+            var zombieaantal = 5;
+            var left = false;
+            var up = false;
+            var right = false;
+            var down = false;
+            var matrix = [
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            ];
+            scene = new THREE.Scene();
+
+            //Rocket edit stuff below:
+            var rocketSound = new Audio('sounds/rocketFire.wav');
+            var rocketExplosion = new Audio('sounds/rocketExplosion.wav');
+            var rocketDirection;
+            var rocketGeometry = new THREE.SphereGeometry(0.07, 8, 8);
+            var rocketMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+            var rocket = new THREE.Mesh(rocketGeometry, rocketMaterial);
+            var rocketCooldown;
+            scene.add(rocket);
+            rocket.position.set(100, 0, 100);
+
+            var lazerDirection;
+            var cubeGeometry = new THREE.BoxGeometry(0.05, 0.05, 0.05);
+            var legG = new THREE.BoxGeometry(0.05, 0.1, 0.05);
+            var lazerGeometry = new THREE.SphereGeometry(0.02, 8, 8);
+            var lazerMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+            var cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x1ec876, transparent: true, opacity: 0 });
+            var cubeMaterial2 = new THREE.MeshLambertMaterial({ color: 0x228b22, transparent: true, opacity: 0 });
+            var barrelmat = new THREE.MeshLambertMaterial({ color: 0x1ec876 });
+            var zombiechestmat = new THREE.MeshLambertMaterial({ color: 0x228b22 });
+            var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
+            var lazerarray = [];
+            var heal = new THREE.Mesh(cubeGeometry, lazerMaterial);
+            var leg = new THREE.Mesh(legG, lazerMaterial);
+            var chestG = new THREE.BoxGeometry(0.12, 0.15, 0.055);
+            var Chest = new THREE.Mesh(chestG, lazerMaterial);
+            var armG = new THREE.BoxGeometry(0.05, 0.05, 0.1);
+            var armG2 = new THREE.BoxGeometry(0.05, 0.1, 0.05);
+            var arm = new THREE.Mesh(armG, lazerMaterial);
+            var arm2 = new THREE.Mesh(armG2, lazerMaterial);
+            var zombiechest = new THREE.Mesh(chestG, zombiechestmat);
+            scene.add(lazer);
+            var heal2 = heal.clone();
+            scene.add(heal);
+            scene.add(heal2);
+            heal.position.set(2, 0, 0.3);
+            heal2.position.set(0.3, 0, 2);
+            lazer.position.set(-10, 0.1, 0);
+            var barrel = new THREE.Mesh(cubeGeometry, barrelmat);
+            scene.add(barrel);
+            barrel.position.set(100, 0, 100);
+            cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+
+
+            cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
+            var legleft = leg.clone();
+
+
+            cube.position.set(1.2, 0, 1.2);
+            leg.position.x += 0.03;
+            legleft.position.x += -0.03;
+            leg.position.y += 0.05;
+            legleft.position.y += 0.05;
+            Chest.position.y += 0.15;
+            arm.position.x -= 0.08;
+            arm.position.z += 0.03;
+            arm.position.y += 0.02;
+            arm2.position.x += 0.08;
+            scene.add(cube);
+            cube.add(Chest);
+            cube.add(leg);
+            Chest.add(arm);
+            Chest.add(arm2);
+            cube.add(legleft);
+
+
+
+            var groundG = new THREE.BoxGeometry(2.9, 0.1, 2.9);
+            var groundmat = new THREE.MeshLambertMaterial({ color: 0xab775f });
+            var ground = new THREE.Mesh(groundG, groundmat);
+            ground.position.y = -0.5;
+            ground.position.x = 1.2;
+            ground.position.z = 0.4;
+            scene.add(ground);
+
+            // var gridXZ = new THREE.GridHelper(1, 24, 0xff4040, 0x0000ff);
+            //  gridXZ.position.x += 1.4;
+            // gridXZ.position.z += 1.4;
+            // scene.add(gridXZ);
+
+            camera = new THREE.PerspectiveCamera(45, 1000 / 1000, 0.1, 10000);
+
+            camera.position.x = 1.029638987050593;
+            camera.position.y = 2.206529389343555;
+            camera.position.z = 4.930110277975688;
+            camera.rotation.x = -0.4979420367530185;
+
+
+            var pointLight = new THREE.PointLight(0xffffff);
+            pointLight.position.set(0, 300, 200);
+            scene.add(pointLight);
+            var healcount = 0;
+            var healcount2 = 0;
+            var playedLosingSound = 0;
+            var zombies = [];
+            var finderlist = [];
+            var gridlist = [];
+            var zombieHealthList = [];
+            var path;
+            var pathlist = [];
+            var startx = 0;
+            var startz = 0;
+            var endx = 0;
+            var endz = 0;
+            var spawnzombies = 0;
+            var isImmuneToDamge = 0;
+            var totalBarrels = 0;
+            var lazerCooldown = 0;
+            var multi = 2;
+            var healthdef = 100;
+            var keyState = {};
+            // var countlvl = 1;
+            //--------------------
+            weapondisplay();
+            zombiespawner();
+            zombielist();
+            pathfinder();
+            timer();
+
+
+            //--------------------
+            window.addEventListener('keydown', function (z) {
+                keyState[z.keyCode || z.which] = true;
+            }, true);
+
+            window.addEventListener('keyup', function (z) {
+                keyState[z.keyCode || z.which] = false;
+            }, true);
+
+            //--------------------
+            $(document).keydown(function (e) {
+                switch (e.which) {
+                    case 80: //p
+                        setPause();
+                        break;
+                    default:
+                        return;
+                }
+                e.preventDefault();
+            });
+
+            function setPause() {
+                if (isPaused == 0) {
+                    isPaused = 1;
+                    myAudio.pause();
+                }
+                else {
+                    isPaused = 0;
+                    myAudio.play();
+                    render();
+                }
+            }
+            function walkstate() {
+                //left
+                if (keyState[37] || keyState[65]) {
+                    if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) - 1]) == 0) {
+                        //left = true;
+                        if (keyState[37] && keyState[38]) {
+                            playerDirection = 5;
+                            cube.position.x -= 0.1;
+                            //cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z - 1));
+                        } else if (keyState[40] && keyState[37]) {
+                            playerDirection = 8;
+                            cube.position.x -= 0.1;
+                            // cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z + 1));
+                        } else {
+                            playerDirection = 4;
+                            cube.position.x -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z));
+                        }
+                    }
+                }
+                //up
+                if (keyState[38] || keyState[68]) {
+                    if ((matrix[Math.round(cube.position.z * 10) - 1][Math.round(cube.position.x * 10)]) == 0) {
+                        //up = true;
+                        if (keyState[38] && keyState[39]) {
+                            playerDirection = 6;
+                            // cube.position.x += 0.1;
+                            cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z - 1));
+                        } else if (keyState[37] && keyState[38]) {
+                            playerDirection = 5;
+                            //cube.position.x -= 0.1;
+                            cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z - 1));
+                        } else {
+                            playerDirection = 1;
+                            cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x, 0, cube.position.z - 1));
+                        }
+                    }
+                }
+                //right
+                if (keyState[39] || keyState[68]) {
+                    if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) + 1]) == 0) {
+                        //right = true;
+                        if (keyState[39] && keyState[40]) {
+                            playerDirection = 7;
+                            cube.position.x += 0.1;
+                            //cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z + 1));
+                        } else if (keyState[38] && keyState[39]) {
+                            playerDirection = 6;
+                            cube.position.x += 0.1;
+                            // cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z - 1));
+                        } else {
+                            playerDirection = 2;
+                            cube.position.x += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z));
+                        }
+                    }
+                }
+                //down
+                if (keyState[40] || keyState[68]) {
+                    if ((matrix[Math.round(cube.position.z * 10) + 1][Math.round(cube.position.x * 10)]) == 0) {
+                        //down = true;
+                        if (keyState[39] && keyState[40]) {
+                            playerDirection = 7;
+                            //cube.position.x += 0.1;
+                            cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z + 1));
+                        } else if (keyState[40] && keyState[37]) {
+                            playerDirection = 8;
+                            //cube.position.x -= 0.1;
+                            cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z + 1));
+                        } else {
+                            playerDirection = 3;
+                            cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x, 0, cube.position.z + 1));
+                        }
+                    }
+                }
+
+
+
+                setTimeout(walkstate, 90);
+            }
+            walkstate();
+
+
+            function setHealth() {
+                document.getElementById('health').value = health;
+            }
+
+            function setScore() {
+                document.getElementById('score').innerHTML = "Score:" + score;
+            }
+            function weapondisplay() {
+                if (weapon1) {
+                    document.getElementById('weapon').innerHTML = "In Hand: lazer";
+                }
+                else if (weapon2) {
+                    document.getElementById('weapon').innerHTML = "In Hand: tafel";
+                }
+                else if (weapon3) { //rocket edit
+                    document.getElementById('weapon').innerHTML = "In Hand: RPG?"
+                }
+            }
+
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(1000, 1000);
+            document.body.appendChild(renderer.domElement);
+            /*controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.25;
+            controls.enableZoom = true;
+    */
+
+            function healing() {
+                /*  console.log("-------")
+                  console.log(endx);
+                  console.log(heal.position.x * 10);
+                  console.log(endz);
+                  console.log(heal.position.z * 10);
+                  console.log("-------")*/
+                if (endx == heal.position.x * 10 && endz == heal.position.z * 10 && healcount == 0 && health < 100) {
+                    health = 100;
+                    scene.remove(heal);
+                    if (health == 100) {
+                        healcount = 1;
+                    }
+                }
+                if (endx == heal2.position.x * 10 && endz == heal2.position.z * 10 && healcount2 == 0 && health < 100) {
+                    health = 100;
+                    scene.remove(heal2);
+                    if (health == 100) {
+                        healcount2 = 1;
+                    }
+                }
+            }
+            function levelcalc() {
+                for (var i = 0; i < allbarrels.length; i++) {
+                    matrix[Math.round(allbarrels[i].position.z * 10)][Math.round(allbarrels[i].position.x * 10)] = 0;
+                    scene.remove(allbarrels[i]);
+
+                }
+                totalBarrels = 0;
+                level++;
+                zombies = [];
+                zombieHealthList = [];
+                pathlist = [];
+                finderlist = [];
+                gridlist = [];
+                zombieaantal = 5;
+                spawnzombies = 0;
+                zombiespawner();
+                zombielist();
+
+                if (healcount == 1) {
+                    scene.add(heal);
+                    healcount = 0;
+                }
+                if (healcount2 == 1) {
+                    scene.add(heal2);
+                    healcount2 = 0;
+                }
+
+
+
+            }
+            function healthmultiplier() {
+                if (zombieaantal > 50) {
+                    document.getElementById('warning').innerHTML = "!WARNING!: zombies will be stronger now";
+                    healthdef = 100
+                    healthdef = healthdef * multi;
+                    multi++;
+                }
+            }
+            function zombiespawner() {
+                zombieaantal = zombieaantal * level;
+                healthmultiplier();
+                for (var i = 0; i < zombieaantal; i++) {
+                    zombieHealthList[i] = healthdef;
+                }
+                if (zombieaantal > 50) {
+                    zombieaantal = 50;
+
+                }
+            }
+
+
+
+
+
+            function zombielist() {
+
+                var spawnpoint1 = setInterval(function () {
+                    if (spawnzombies >= zombieaantal - 2) {
+                        clearInterval(spawnpoint1)
+                    }
+                    finderlist[spawnzombies] = new PF.AStarFinder({
+                        allowDiagonal: true,
+                        dontCrossCorners: true
+                    });
+
+                    zombies[spawnzombies] = cube2.clone();
+                    zombies[spawnzombies].position.set(1.9, 0, 1.9);
+                    var zombiearm = arm.clone();
+                    var zombiearm2 = zombiearm.clone();
+                    var zombieleg = leg.clone();
+                    var zombielegleft = legleft.clone();
+                    var zombiechest2 = zombiechest.clone();
+                    scene.add(zombies[spawnzombies])
+                    zombies[spawnzombies].add(zombiechest2);
+                    zombies[spawnzombies].add(zombieleg);
+                    zombiechest2.add(zombiearm);
+                    zombiechest2.add(zombiearm2);
+                    //Chest.add(arm2);
+                    zombies[spawnzombies].add(zombielegleft);
+                    zombieleg.position.x += 0.005;
+                    zombielegleft.position.x += -0.005;
+                    zombieleg.position.y -= 0.01;
+                    zombielegleft.position.y -= 0.01;
+                    zombiechest2.position.y += 0.15;
+                    //zombiearm.position.x -= 0.08;
+                    zombiearm.position.z += 0.03;
+                    zombiearm.position.y += 0.02;
+                    zombiearm2.position.x += 0.16;
+                    zombiearm2.position.z += 0.03;
+                    zombiearm2.position.y += 0.02;
+
+
+
+                    //zombies[spawnzombies].lookAt(new THREE.Vector3(endx,0,endz));
+                    spawnzombies++;
+
+                }, 500);
+
+                var spawnpoint2 = setInterval(function () {
+                    if (spawnzombies >= zombieaantal - 2) {
+                        clearInterval(spawnpoint2)
+                    }
+                    finderlist[spawnzombies] = new PF.AStarFinder({
+                        allowDiagonal: true,
+                        dontCrossCorners: true
+                    });
+
+                    zombies[spawnzombies] = cube2.clone();
+                    zombies[spawnzombies].position.set(0.1, 0, 0.1);
+                    var zombiearm = arm.clone();
+                    var zombiearm2 = zombiearm.clone();
+                    var zombieleg = leg.clone();
+                    var zombielegleft = legleft.clone();
+                    var zombiechest2 = zombiechest.clone();
+                    scene.add(zombies[spawnzombies])
+                    zombies[spawnzombies].add(zombiechest2);
+                    zombies[spawnzombies].add(zombieleg);
+                    zombiechest2.add(zombiearm);
+                    zombiechest2.add(zombiearm2);
+                    //Chest.add(arm2);
+                    zombies[spawnzombies].add(zombielegleft);
+                    zombieleg.position.x += 0.005;
+                    zombielegleft.position.x += -0.005;
+                    zombieleg.position.y -= 0.01;
+                    zombielegleft.position.y -= 0.01;
+                    zombiechest2.position.y += 0.15;
+                    //zombiearm.position.x -= 0.08;
+                    zombiearm.position.z += 0.03;
+                    zombiearm.position.y += 0.02;
+                    zombiearm2.position.x += 0.16;
+                    zombiearm2.position.z += 0.03;
+                    zombiearm2.position.y += 0.02;
+                    //zombies[spawnzombies].lookAt(new THREE.Vector3(endx,0,endz));
+                    spawnzombies++;
+
+                }, 505);
+
+            }
+
+
+
+
+
+
+            function pathfinder() {
+
+                if (isPaused == 0) {
+                    endx = Math.round(cube.position.x * 10);
+                    endz = Math.round(cube.position.z * 10);
+
+
+                    for (c = 0; c < zombies.length; c++) {
+
+                        if (zombieHealthList[c] > 0) {
+                            gridlist[c] = new PF.Grid(matrix);
+                            startx = Math.round(zombies[c].position.x * 10);
+                            startz = Math.round(zombies[c].position.z * 10);
+                            pathlist[c] = (finderlist[c].findPath(startx, startz, endx, endz, gridlist[c])).slice(0, 2);
+                            matrix[pathlist[c][0][1]][pathlist[c][0][0]] = 0;
+
+                            zombies[c].position.x = (pathlist[c][1][0]) / 10;
+                            zombies[c].position.z = (pathlist[c][1][1]) / 10;
+
+                            zombies[c].lookAt(new THREE.Vector3(cube.position.x, 0, cube.position.z));
+
+                            matrix[pathlist[c][1][1]][pathlist[c][1][0]] = 1;
+                        }
+
+
+                    }
+
+                }
+
+            }
+
+
+
+            function timer() {
+                setInterval(function () {
+                    pathfinder();
+
+                }, 500);
+                setInterval(function () {
+                    checkZombiesHealth();
+                    /*console.log(camera.position.x);
+                    console.log(camera.position.y);
+                    console.log(camera.position.z);
+                    console.log(camera.rotation.x);*/
+                }, 4000)
+                /* setInterval(function () {
+                     eightway();
+
+                 }, 80);
+     */
+            }
+            /* function eightway(){
+                 if(left && up){
+                     cube.position.x -= 0.1;
+                     cube.position.z -= 0.1;
+                     cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
+                 }
+                 if(up && right){
+                     cube.position.x += 0.1;
+                     cube.position.z -= 0.1;
+                     cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
+                 }
+                 if(right && down){
+                     cube.position.x += 0.1;
+                     cube.position.z += 0.1;
+                     cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
+                 }
+                 if(down && left){
+                     cube.position.x -= 0.1;
+                     cube.position.z += 0.1;
+                     cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
+                 }
+                 if(left){
+                     cube.position.x -= 0.1;
+                     cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z));
+                 }
+                 if(up){
+                     cube.position.z -= 0.1;
+                     cube.lookAt(new THREE.Vector3(cube.position.x ,0,cube.position.z - 1));
+                 }
+                 if(right){
+                     cube.position.x += 0.1;
+                     cube.lookAt(new THREE.Vector3(cube.position.x + 1,0,cube.position.z));
+                 }
+                 if(down){
+                     cube.position.z += 0.1;
+                     cube.lookAt(new THREE.Vector3(cube.position.x ,0,cube.position.z +1));
+                 }
+
+
+             }*/
+
+            //Start render function
+            function render() {
+                //eightway()
+                if (lazer.position.x > 2.4 || lazer.position.x < 0 || lazer.position.z > 2.4 || lazer.position.z < 0) {
+                    lazer.position.x += 100;
+                    lazer.position.z += 100;
+                    lazerCooldown = 0;
+                }
+                if (rocket.position.x > 2.4 || rocket.position.x < 0 || rocket.position.z > 2.4 || rocket.position.z < 0) { //rocket edit
+                    rocket.position.x += 100;
+                    rocket.position.z += 100;
+                    rocketCooldown = 0;
+                }
+
+
+                if (lazerDirection == 1) {
+                    lazer.position.z -= 0.1;
+                }
+                else if (lazerDirection == 2) {
+                    lazer.position.x += 0.1;
+                }
+                else if (lazerDirection == 3) {
+                    lazer.position.z += 0.1;
+                }
+                else if (lazerDirection == 4) {
+                    lazer.position.x -= 0.1;
+                }
+                else if (lazerDirection == 5) {
+                    lazer.position.x -= 0.1;
+                    lazer.position.z -= 0.1;
+                }
+                else if (lazerDirection == 6) {
+                    lazer.position.x += 0.1;
+                    lazer.position.z -= 0.1;
+                }
+                else if (lazerDirection == 7) {
+                    lazer.position.x += 0.1;
+                    lazer.position.z += 0.1;
+                }
+                else if (lazerDirection == 8) {
+                    lazer.position.x -= 0.1;
+                    lazer.position.z += 0.1;
+                }
+
+                //rocket edit
+                if (rocketDirection == 1) {
+                    rocket.position.z -= 0.02;
+                }
+                else if (rocketDirection == 2) {
+                    rocket.position.x += 0.02;
+                }
+                else if (rocketDirection == 3) {
+                    rocket.position.z += 0.02;
+                }
+                else if (rocketDirection == 4) {
+                    rocket.position.x -= 0.02;
+                }
+                else if (rocketDirection == 5) {
+                    rocket.position.x -= 0.02;
+                    rocket.position.z -= 0.02;
+                }
+                else if (rocketDirection == 6) {
+                    rocket.position.x += 0.02;
+                    rocket.position.z -= 0.02;
+                }
+                else if (rocketDirection == 7) {
+                    rocket.position.x += 0.02;
+                    rocket.position.z += 0.02;
+                }
+                else if (rocketDirection == 8) {
+                    rocket.position.x -= 0.02;
+                    rocket.position.z += 0.02;
+                }
+
+                if (isPaused == 0) {
+                    setTimeout(function () {
+
+                        requestAnimationFrame(render);
+
+                    }, 1000 / 60);
+                    isImmuneToDamge = 0;
+                    // walkstate();
+
+                    for (var c = 0; c < zombies.length; c++) {
+
+                        //if zombie gets hit by lazer
+                        if (Math.abs(lazer.position.x - zombies[c].position.x) < 0.1 && Math.abs(lazer.position.z - zombies[c].position.z) < 0.1) {
+
+                            lazer.position.x += 100;
+                            lazer.position.z += 100;
+                            lazerCooldown = 0;
+                            zombieHealthList[c] = zombieHealthList[c] - 100;
+                            // console.log("zombie#" + c + " health: " + zombieHealthList[c])
+                            score += 20;
+                        }
+
+                        //rocket edit
+                        //if zombie gets hit by rocket
+                        if (Math.abs(rocket.position.x - zombies[c].position.x) < 0.1 && Math.abs(rocket.position.z - zombies[c].position.z) < 0.1) {
+
+                            rocketExplosion.play();
+                            rocket.position.x += 100;
+                            rocket.position.z += 100;
+                            rocketCooldown = 0;
+
+                            for (var i = 0; i < zombies.length; i++) {
+                                if (Math.abs(zombies[c].position.x - zombies[i].position.x) < 0.2 && Math.abs(zombies[c].position.z - zombies[i].position.z) < 0.2) {
+                                   
+                                    zombieHealthList[i] = zombieHealthList[i] - 100;
+                                    score += 20;
+                                }
+                            }
+
+
+                        }
+
+                        //checks if zombie is dead
+                        if (zombieHealthList[c] <= 0 && zombies[c].position.y > -1) {
+                            matrix[Math.round(zombies[c].position.z * 10)][Math.round(zombies[c].position.x * 10)] = 0;
+
+                            zombies[c].position.x = -100;
+                            zombies[c].position.y = -100;
+                            zombies[c].position.z = -100;
+
+                        }
+
+                        var zombiePosX = Math.round(zombies[c].position.x * 10);
+                        var zombiePosZ = Math.round(zombies[c].position.z * 10);
+                        var playerPosX = Math.round(cube.position.x * 10);
+                        var playerPosZ = Math.round(cube.position.z * 10);
+
+                        //If zombie touches player
+                        if (zombiePosX == playerPosX && zombiePosZ == playerPosZ && isImmuneToDamge == 0) {
+                            health--;
+                            //console.log(health);
+                        }
+                    }
+
+                    //When health reaches 0
+                    if (health <= 0) {
+
+                        //sets losing screen image
+                        var img = document.createElement("img");
+                        img.src = "images/lose.png";
+                        img.width = 680;
+                        img.height = 480;
+                        img.alt = "You lost";
+                        img.style.position = "absolute";
+                        img.style.left = "30%";
+                        img.style.top = "100px";
+
+                        // This next line will just add it to the <body> tag
+                        document.body.appendChild(img);
+                        zombies = [];
+
+                        pathlist = [];
+                        finderlist = [];
+                        gridlist = [];
+                        zombieaantal = 5;
+                        spawnzombies = 0;
+                        zombieHealthList[0] = 100;
+                        //document.getElementById('gameinfo').style.display = "none";
+                        document.getElementById("gameInfo").style.display = "none";
+                        for (var rem = scene.children.length - 1; rem >= 0; rem--) {
+                            obj = scene.children[rem];
+                            scene.remove(obj);
+                        }
+                        //plays losing sound
+                        if (playedLosingSound == 0) {
+                            myAudio.pause();
+                            myAudio.currentTime = 0;
+                            var LosingSound = new Audio('sounds/lose.wav');
+
+
+                            LosingSound.play();
+                            playedLosingSound = 1;
+                            window.setTimeout(reloadpage, 5000);
+                        }
+
+
+                    }
+
+
+
+                    healing();
+                    setHealth();
+                    setScore();
+                    //controls.update();
+                    renderer.render(scene, camera);
+
+                }
+            }
+
+            render();
+            //zombielist();
+            function reloadpage() {
+                window.location.reload();
+            }
+            $(document).keydown(function (e) {
+                switch (e.which) {
+                    case 32: //space
+                        if (currentWeapon == 1 && lazerCooldown == 0) {
+                            lazerCooldown = 1;
+                            lazer.position.x = cube.position.x;
+                            lazer.position.z = cube.position.z;
+                            lazerDirection = playerDirection;
+                            lazerSound.play();
+                        }
+                        else if (currentWeapon == 2 && totalBarrels < 5 && matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10)] == 0) {
+
+                            allbarrels[totalBarrels] = barrel.clone();
+
+                            scene.add(allbarrels[totalBarrels]);
+                            allbarrels[totalBarrels].position.x = cube.position.x;
+                            allbarrels[totalBarrels].position.z = cube.position.z;
+                            matrix[Math.round(allbarrels[totalBarrels].position.z * 10)][Math.round(allbarrels[totalBarrels].position.x * 10)] = 1;
+                            totalBarrels++;
+                            barrelSound.play();
+                        }
+                        else if (currentWeapon == 3 && rocketCooldown == 0) {
+                            rocketCooldown = 1;
+                            rocket.position.x = cube.position.x;
+                            rocket.position.z = cube.position.z;
+                            rocketDirection = playerDirection;
+                            rocketSound.play();
+                        }
+                        break;
+
+                    case 49: //1
+                        weapon3 = false;
+                        weapon2 = false;
+                        weapon1 = true;
+                        weapondisplay();
+                        currentWeapon = 1;
+                        // console.log(currentWeapon);
+                        break;
+                    case 50: //2
+                        weapon1 = false;
+                        weapon3 = false;
+                        weapon2 = true;
+                        weapondisplay();
+                        currentWeapon = 2;
+                        //console.log(currentWeapon);
+                        break;
+                    case 51: //3
+                        weapon1 = false;
+                        weapon2 = false;
+                        weapon3 = true;
+                        weapondisplay();
+                        currentWeapon = 3;
+                    default: return;
+                }
+                e.preventDefault();
+            });
+
+
+            function checkZombiesHealth() {
+                var zombieHealthSum = 0;
+                for (var i = 0; i < zombies.length; i++) {
+                    if (zombieHealthList[i] <= 0) {
+                        scene.remove(zombies[i]);
+                    }
+                    if (zombies[i].position.y == -100) {
+                        zombieHealthList[i] = 0;
+                    }
+                    else {
+                        zombieHealthSum = 1;
+                    }
+                }
+                if (
+
+                        zombieHealthSum <= 0 && zombies.length > 0) {
+                    levelUpSound.play();
+                    levelcalc();
+                }
+            }
+
+        }
+
+
+
+    </script>
+</body>
+</html>
