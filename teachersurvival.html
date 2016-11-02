@@ -59,6 +59,7 @@
         var currentWeapon = 1;
         var weapon1 = true;
         var weapon2;
+        var weapon3;
         var allbarrels = [];
         var scene, renderer, camera;
         var cube;
@@ -96,6 +97,15 @@
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ];
         scene = new THREE.Scene();
+        var rocketSound = new Audio('sounds/rocketFire.wav');
+        var rocketExplosion = new Audio('sounds/rocketExplosion.wav');
+        var rocketDirection;
+        var rocketGeometry = new THREE.SphereGeometry(0.07, 8, 8);
+        var rocketMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+        var rocket = new THREE.Mesh(rocketGeometry, rocketMaterial);
+        var rocketCooldown;
+        scene.add(rocket);
+        rocket.position.set(100, 0, 100);
         var lazerDirection;
         var cubeGeometry = new THREE.BoxGeometry(0.05, 0.05, 0.05);
         var legG = new THREE.BoxGeometry(0.05, 0.1,0.05);
@@ -244,7 +254,7 @@
         var spawnzombies = 0;
         var isImmuneToDamge = 0;
         var totalBarrels = 0;
-        var cooldown = 0;
+        var lazerCooldown = 0;
         var multi =2;
         var healthdef = 100;
         var keyState = {};
@@ -392,8 +402,11 @@
             if(weapon1){
                 document.getElementById('weapon').innerHTML = " In Hand: lazer";
             }
-            if(weapon2){
+            else if (weapon2) {
                 document.getElementById('weapon').innerHTML = "In Hand: tafel";
+            }
+            else if (weapon3) { //rocket edit
+                document.getElementById('weapon').innerHTML = "In Hand: RPG?"
             }
         }
 
@@ -697,7 +710,13 @@
             if (lazer.position.x > 2.4 || lazer.position.x < 0 || lazer.position.z > 2.4 || lazer.position.z < 0) {
                 lazer.position.x += 100;
                 lazer.position.z += 100;
-                cooldown = 0;
+                lazerCooldown = 0;
+            }
+
+            if (rocket.position.x > 2.4 || rocket.position.x < 0 || rocket.position.z > 2.4 || rocket.position.z < 0) { //rocket edit
+                rocket.position.x += 100;
+                rocket.position.z += 100;
+                rocketCooldown = 0;
             }
 
 
@@ -730,6 +749,35 @@
                 lazer.position.z += 0.1;
             }
 
+            if (rocketDirection == 1) {
+                rocket.position.z -= 0.02;
+            }
+            else if (rocketDirection == 2) {
+                rocket.position.x += 0.02;
+            }
+            else if (rocketDirection == 3) {
+                rocket.position.z += 0.02;
+            }
+            else if (rocketDirection == 4) {
+                rocket.position.x -= 0.02;
+            }
+            else if (rocketDirection == 5) {
+                rocket.position.x -= 0.02;
+                rocket.position.z -= 0.02;
+            }
+            else if (rocketDirection == 6) {
+                rocket.position.x += 0.02;
+                rocket.position.z -= 0.02;
+            }
+            else if (rocketDirection == 7) {
+                rocket.position.x += 0.02;
+                rocket.position.z += 0.02;
+            }
+            else if (rocketDirection == 8) {
+                rocket.position.x -= 0.02;
+                rocket.position.z += 0.02;
+            }
+
             if (isPaused == 0) {
                 setTimeout( function() {
 
@@ -741,15 +789,34 @@
 
                 for (var c = 0; c < zombies.length; c++) {
 
-                    //if zombie gets hit
+                    //if zombie gets hit by lazer
                     if (Math.abs(lazer.position.x - zombies[c].position.x) < 0.1 && Math.abs(lazer.position.z - zombies[c].position.z) < 0.1) {
 
                         lazer.position.x += 100;
                         lazer.position.z += 100;
-                        cooldown = 0;
+                        lazerCooldown = 0;
                         zombieHealthList[c] = zombieHealthList[c] - 100;
                        // console.log("zombie#" + c + " health: " + zombieHealthList[c])
                         score += 20;
+                    }
+
+                    //if zombie gets hit by rocket
+                    if (Math.abs(rocket.position.x - zombies[c].position.x) < 0.1 && Math.abs(rocket.position.z - zombies[c].position.z) < 0.1) {
+
+                        rocketExplosion.play();
+                        rocket.position.x += 100;
+                        rocket.position.z += 100;
+                        rocketCooldown = 0;
+
+                        for (var i = 0; i < zombies.length; i++) {
+                            if (Math.abs(zombies[c].position.x - zombies[i].position.x) < 0.2 && Math.abs(zombies[c].position.z - zombies[i].position.z) < 0.2) {
+
+                                zombieHealthList[i] = zombieHealthList[i] - 100;
+                                score += 20;
+                            }
+                        }
+
+
                     }
 
                     //checks if zombie is dead
@@ -837,8 +904,8 @@
         $(document).keydown(function (e) {
             switch (e.which) {
                 case 32: //space
-                    if (currentWeapon == 1 && cooldown == 0) {
-                        cooldown = 1;
+                    if (currentWeapon == 1 && lazerCooldown == 0) {
+                        lazerCooldown = 1;
                         lazer.position.x = cube.position.x;
                         lazer.position.z = cube.position.z;
                         lazerDirection = playerDirection;
@@ -855,25 +922,38 @@
                         totalBarrels++;
                         barrelSound.play();
                     }
+                    else if (currentWeapon == 3 && rocketCooldown == 0) {
+                        rocketCooldown = 1;
+                        rocket.position.x = cube.position.x;
+                        rocket.position.z = cube.position.z;
+                        rocketDirection = playerDirection;
+                        rocketSound.play();
+                    }
+                break;
                     break;
 
                 case 49: //1
-                        weapon2 = false;
-                        weapon1 = true;
+                    weapon3 = false;
+                    weapon2 = false;
+                    weapon1 = true;
                     weapondisplay();
                     currentWeapon = 1;
-                   // console.log(currentWeapon);
+                    // console.log(currentWeapon);
                     break;
                 case 50: //2
                     weapon1 = false;
+                    weapon3 = false;
                     weapon2 = true;
                     weapondisplay();
                     currentWeapon = 2;
                     //console.log(currentWeapon);
                     break;
-
-
-
+                case 51: //3
+                    weapon1 = false;
+                    weapon2 = false;
+                    weapon3 = true;
+                    weapondisplay();
+                    currentWeapon = 3;
                 default: return;
             }
             e.preventDefault();
