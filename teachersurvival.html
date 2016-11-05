@@ -36,6 +36,8 @@
     </div>
 </div>
 
+<input id="input" type="text" onkeyup="test()" style="display: none">
+<button type="button" id="submit" onclick="showHint(this.value)" style="display: none">Change Content</button>
 
     <img id="knop" src="images/SelectorScreen_StartAdventure_Highlight.png" onclick="menu()" style="top:30%; left:40%; position: relative;">
 
@@ -871,7 +873,7 @@ var wall1;
 
                         LosingSound.play();
                         playedLosingSound = 1;
-                        window.setTimeout(reloadpage,5000);
+
                     }
 
 
@@ -890,9 +892,37 @@ var wall1;
 
         render();
         //zombielist();
+
+        var name1;
+        function namecreator(){
+
+            name1 = document.getElementById("input").value;
+            console.log(name1);
+        }
+
+        document.getElementById('knop').value =  score;
+        function showHint(str) {
+            var test = name1;
+            var xhttp;
+            if (str.length == 0) {
+
+                return;
+            }
+            xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("txtHint").innerHTML = this.responseText;
+                }
+            };
+            xhttp.open("POST", "end.php?q="+ str+ "&" +"n=" +test, true);
+            xhttp.send();
+            window.setTimeout(reloadpage,5000);
+        }
+
         function reloadpage(){
             window.location.reload();
         }
+
         $(document).keydown(function (e) {
             switch (e.which) {
                 case 32: //space
