@@ -145,21 +145,7 @@
 
 
         cube.position.set(1.2, 0, 1.2);
-        /*leg.position.x += 0.03;
-        legleft.position.x += -0.03;
-        leg.position.y += 0.05;
-        legleft.position.y += 0.05;
-        Chest.position.y += 0.15;
-        arm.position.x -= 0.08;
-        arm.position.z += 0.03;
-        arm.position.y += 0.02;
-        arm2.position.x += 0.08;
 
-        cube.add(Chest);
-        cube.add(leg);
-        Chest.add(arm);
-        Chest.add(arm2);
-        cube.add(legleft);*/
         var player;
         var zombiemod;
         scene.add(cube);
@@ -194,7 +180,19 @@
           //  zombie.position.set((cube.position.x / 10)  - 0.2,-0.15,(cube.position.z / 10) + 0.27);
 
         }
-
+var wall1;
+      var loader3 = new THREE.JSONLoader();
+      loader3.load('objects/test2.json', addscene);
+      function addscene(geometry, materials){
+          //var material1 = new THREE.MultiMaterial(materials);
+          var model3 = new THREE.Mesh(geometry, lazerMaterial);
+          model3.scale.set(0.08,0.08,0.08);
+          wall1 = model3;
+          wall1.position.y = -0.07;
+          wall1.position.x = 0.65;
+          wall1.position.z = 1.42;
+           scene.add(wall1);
+      }
 
         var groundG = new THREE.BoxGeometry(2.5,0.1,2.5);
         var groundmat = new THREE.MeshLambertMaterial({color: 0xab775f });
@@ -205,11 +203,11 @@
         scene.add(ground);
 
         var wallGeo = new THREE.BoxGeometry(0.01,0.8,2.55);
-        var wallLeft = new THREE.Mesh(wallGeo, groundmat);
-        wallLeft.position.y = 0.3;
-        wallLeft.position.x = -0.045;
-        wallLeft.position.z = 1;
-        scene.add(wallLeft);
+        //var wallLeft = new THREE.Mesh(wallGeo, groundmat);
+        //wallLeft.position.y = 0.3;
+        //wallLeft.position.x = -0.045;
+       // wallLeft.position.z = 1;
+        //scene.add(wallLeft);
         /*var bbox = new THREE.Box3().setFromObject(wallLeft);
         console.log(bbox.max.z - bbox.min.z);
         console.log(bbox.max.x - bbox.min.x);
@@ -420,6 +418,7 @@
         controls.enableDamping = true;
         controls.dampingFactor = 0.25;
         controls.enableZoom = true;*/
+
 
 
         function healing(){
@@ -645,17 +644,10 @@
             setInterval(function () {
                 pathfinder();
 
-            }, 500);
+            }, 300);
             setInterval(function () {
                 checkZombiesHealth();
-               console.log(player.position.x);
-                console.log(player.position.y);
-                console.log(player.position.z);
-                console.log("--------------------")
-                console.log(cube.position.x);
-                console.log(cube.position.y);
-                console.log(cube.position.z);
-                 /*    console.log(camera.rotation.x);*/
+
             }, 4000)
            /* setInterval(function () {
                 eightway();
