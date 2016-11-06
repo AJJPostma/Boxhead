@@ -18,33 +18,33 @@
 </head>
 <body style="overflow: hidden; background-color:black; width: 100%; height: 100%; position: absolute;">
 
-<div id="gameInfo" style="display:none; position:absolute; color:white; left:150px; top: 80px; width: 1000px; height: 20%;">
-    <div id="stats" style="position: relative; width: 333px; float: left;">
-        <p>Health:  <progress id="health" max="100"></progress> </p>
-        <p id="weapon"></p>
-        <p id="warning"></p>
+    <div id="gameInfo" style="display:none; position:absolute; color:white; left:150px; top: 80px; width: 1000px; height: 20%;">
+        <div id="stats" style="position: relative; width: 333px; float: left;">
+            <p>Health:  <progress id="health" max="100"></progress> </p>
+            <p id="weapon"></p>
+            <p id="warning"></p>
+        </div>
+        <div id="scoreboard" style="position: relative; width: 333px; float: left;">
+            <p id="score"></p>
+            <p id="wave"></p>
+        </div>
+        <div id="info" style=" position: relative; width: 333px; float: left;">
+            <p>Use arrow keys to move</p>
+            <p>Press space to shoot</p>
+            <p>Use number keys to change weapon</p>
+            <p>Press p to pause/unpause</p>
+        </div>
     </div>
-    <div id="scoreboard" style="position: relative; width: 333px; float: left;">
-        <p id="score" ></p>
-        <p id="wave"></p>
-    </div>
-    <div id="info" style=" position: relative; width: 333px; float: left;">
-        <p>Use arrow keys to move</p>
-        <p>Press space to shoot</p>
-        <p>Use number keys to change weapon</p>
-        <p>Press p to pause/unpause</p>
-    </div>
-</div>
 
-<input id="input" type="text"  style="display: none">
-<button type="button" id="submit"  style="display: none" onclick="ajsender()">Change Content</button>
+    <input id="input" type="text" style="display: none">
+    <button type="button" id="submit" style="display: none" onclick="ajsender()">Change Content</button>
 
     <img id="knop" src="images/SelectorScreen_StartAdventure_Highlight.png" onclick="menu()" style="top:30%; left:40%; position: relative;">
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-    var score;
-function ajsender() {
+        var score;
+        function ajsender() {
 
             name1 = document.getElementById("input").value;
             console.log(name1);
@@ -57,602 +57,558 @@ function ajsender() {
                     document.getElementById("txtHint").innerHTML = this.responseText;
                 }
             };*/
-            xhttp.open("POST", "end.php?q="+ score + "&" +"n=" +test, true);
+            xhttp.open("POST", "end.php?q=" + score + "&" + "n=" + test, true);
             xhttp.send();
-            window.setTimeout(reloadpage,5000);
+            window.setTimeout(reloadpage, 5000);
         }
 
-    function reloadpage(){
-        window.location.reload();
-    }
-
-    function menu() {
-
-        document.getElementById("knop").style.display = "none";
-        document.getElementById("gameInfo").style.display = "block";
-        myAudio = new Audio('sounds/background.ogg');
-        myAudio.addEventListener('ended', function () {
-            this.currentTime = 0;
-            this.play();
-        }, false);
-        myAudio.volume = 0.5;
-        myAudio.play();
-        var lazerSound = new Audio('sounds/lazer.wav');
-        var levelUpSound = new Audio('sounds/levelUp.wav');
-        var barrelSound = new Audio('sounds/barrel.wav');
-         score = 0;
-        var health = 1000000;
-        var isPaused = 0;
-        var currentWeapon = 1;
-        var weapon1 = true;
-        var weapon2;
-        var weapon3;
-        var allbarrels = [];
-        var scene, renderer, camera;
-        var cube;
-        var playerDirection = 3;
-        var level = 1;
-        var zombieaantal = 5;
-        var left = false;
-        var up = false;
-        var right = false;
-        var down = false;
-        var matrix = [
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        ];
-        scene = new THREE.Scene();
-        var rocketSound = new Audio('sounds/rocketFire.wav');
-        var rocketExplosion = new Audio('sounds/rocketExplosion.wav');
-        var rocketDirection;
-        var rocketGeometry = new THREE.SphereGeometry(0.07, 8, 8);
-        var rocketMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
-        var rocket = new THREE.Mesh(rocketGeometry, rocketMaterial);
-        var rocketCooldown;
-        scene.add(rocket);
-        rocket.position.set(100, 0, 100);
-        var lazerDirection;
-        var cubeGeometry = new THREE.BoxGeometry(0.05, 0.05, 0.05);
-        var legG = new THREE.BoxGeometry(0.05, 0.1,0.05);
-        var lazerGeometry = new THREE.SphereGeometry(0.02, 8, 8);
-        var lazerMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
-        var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x1ec876,transparent: true, opacity : 0});
-        var cubeMaterial2 = new THREE.MeshLambertMaterial({color: 0x228b22,transparent: true, opacity : 0});
-        var barrelmat = new THREE.MeshLambertMaterial({color: 0x1ec876,transparent: true, opacity : 0});
-        var barrelmat2 = new THREE.MeshLambertMaterial({color: 0x808080});
-        var zombiechestmat = new THREE.MeshLambertMaterial({color: 0x228b22});
-        var muurmat = new THREE.MeshLambertMaterial({color: 0xE1E1E1})
-        var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
-        var lazerarray = [];
-        var heal = new THREE.Mesh(cubeGeometry,lazerMaterial);
-        var leg = new THREE.Mesh(legG, lazerMaterial);
-        var chestG = new THREE.BoxGeometry(0.12,0.15,0.055);
-        var Chest = new THREE.Mesh(chestG, lazerMaterial);
-        var armG = new THREE.BoxGeometry(0.05,0.05,0.1);
-        var armG2 = new THREE.BoxGeometry(0.05,0.1,0.05);
-        var arm = new THREE.Mesh(armG, lazerMaterial);
-        var arm2 = new THREE.Mesh(armG2, lazerMaterial);
-        var zombiechest = new THREE.Mesh(chestG, zombiechestmat);
-        scene.add(lazer);
-        var heal2 = heal.clone();
-        scene.add(heal);
-        scene.add(heal2);
-        heal.position.set(2,0,0.3);
-        heal2.position.set(0.3,0,2);
-        lazer.position.set(-10, 0.1, 0);
-        var barrel = new THREE.Mesh(cubeGeometry, barrelmat);
-        scene.add(barrel);
-        barrel.position.set(100, 0, 100);
-        cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-        var computer;
-        var loader6 = new THREE.JSONLoader();
-        loader6.load('objects/pc.json', addpc);
-
-        function addpc(geometry,materials){
-
-            var model6 = new THREE.Mesh(geometry, barrelmat2);
-            model6.scale.set(0.08,0.08,0.08);
-            //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
-
-            model6.rotation.y = Math.PI * 1.5;
-            computer = model6;
-            computer.position.z = -0.2;
-            computer.position.y = -0.1;
-            //computer.position.set((barrel.position.x ) ,-0.15,(barrel.position.z) + 0.2);
-            barrel.add(computer);
-        }
-        var krijt;
-        var loader7 = new THREE.JSONLoader();
-        loader7.load('objects/bord1.json', addkrijt);
-
-        function addkrijt(geometry,materials){
-
-            //var krijtmat = new THREE.MultiMaterial( materials );
-            var mTexture = new THREE.ImageUtils.loadTexture("images/bord.jpg");
-            var mMaterial = new THREE.MeshPhongMaterial({ map: mTexture, side: THREE.DoubleSide });
-            var model7 = new THREE.Mesh(geometry, mMaterial);
-            model7.scale.set(0.08,0.08,0.08);
-            //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
-
-            //model6.rotation.y = Math.PI * 1.5;
-            krijt = model7;
-            model6.rotation.y = Math.PI * 1.5;
-            //computer.position.set((barrel.position.x ) ,-0.15,(barrel.position.z) + 0.2);
-            scene.add(krijt);
+        function reloadpage() {
+            window.location.reload();
         }
 
-        var cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
-        var legleft = leg.clone();
+        function menu() {
 
+            document.getElementById("knop").style.display = "none";
+            document.getElementById("gameInfo").style.display = "block";
+            myAudio = new Audio('sounds/background.ogg');
+            myAudio.addEventListener('ended', function () {
+                this.currentTime = 0;
+                this.play();
+            }, false);
+            myAudio.volume = 0.5;
+            myAudio.play();
+            var requiredRPGScore = 100;
+            var rpgIsUnlocked = 0;
+            var lazerSound = new Audio('sounds/lazer.wav');
+            var barrelSound = new Audio('sounds/barrel.wav');
+            var rpgUnlockedAudio = new Audio('sounds/rpgUnlocked.mp3');
+            var levelUpSound = new Audio('sounds/levelUp.wav');
+            score = 0;
+            var health = 1000000;
+            var isPaused = 0;
+            var currentWeapon = 1;
+            var weapon1 = true;
+            var weapon2;
+            var weapon3;
+            var allbarrels = [];
+            var scene, renderer, camera;
+            var cube;
+            var playerDirection = 3;
+            var level = 1;
+            var zombieaantal = 5;
+            var left = false;
+            var up = false;
+            var right = false;
+            var down = false;
+            var matrix = [
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            ];
+            scene = new THREE.Scene();
+            var rocketSound = new Audio('sounds/rocketFire.wav');
+            var rocketExplosion = new Audio('sounds/rocketExplosion.wav');
+            var rocketDirection;
+            var rocketGeometry = new THREE.SphereGeometry(0.07, 8, 8);
+            var rocketMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+            var rocket = new THREE.Mesh(rocketGeometry, rocketMaterial);
+            var rocketCooldown;
+            scene.add(rocket);
+            rocket.position.set(100, 0, 100);
+            var lazerDirection;
+            var cubeGeometry = new THREE.BoxGeometry(0.05, 0.05, 0.05);
+            var legG = new THREE.BoxGeometry(0.05, 0.1, 0.05);
+            var lazerGeometry = new THREE.SphereGeometry(0.02, 8, 8);
+            var lazerMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+            var cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x1ec876, transparent: true, opacity: 0 });
+            var cubeMaterial2 = new THREE.MeshLambertMaterial({ color: 0x228b22, transparent: true, opacity: 0 });
+            var barrelmat = new THREE.MeshLambertMaterial({ color: 0x1ec876, transparent: true, opacity: 0 });
+            var barrelmat2 = new THREE.MeshLambertMaterial({ color: 0x808080 });
+            var zombiechestmat = new THREE.MeshLambertMaterial({ color: 0x228b22 });
+            var muurmat = new THREE.MeshLambertMaterial({ color: 0xE1E1E1 })
+            var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
+            var lazerarray = [];
+            var heal = new THREE.Mesh(cubeGeometry, lazerMaterial);
+            var leg = new THREE.Mesh(legG, lazerMaterial);
+            var chestG = new THREE.BoxGeometry(0.12, 0.15, 0.055);
+            var Chest = new THREE.Mesh(chestG, lazerMaterial);
+            var armG = new THREE.BoxGeometry(0.05, 0.05, 0.1);
+            var armG2 = new THREE.BoxGeometry(0.05, 0.1, 0.05);
+            var arm = new THREE.Mesh(armG, lazerMaterial);
+            var arm2 = new THREE.Mesh(armG2, lazerMaterial);
+            var zombiechest = new THREE.Mesh(chestG, zombiechestmat);
+            scene.add(lazer);
+            var heal2 = heal.clone();
+            scene.add(heal);
+            scene.add(heal2);
+            heal.position.set(2, 0, 0.3);
+            heal2.position.set(0.3, 0, 2);
+            lazer.position.set(-10, 0.1, 0);
+            var barrel = new THREE.Mesh(cubeGeometry, barrelmat);
+            scene.add(barrel);
+            barrel.position.set(100, 0, 100);
+            cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+            var computer;
+            var loader6 = new THREE.JSONLoader();
+            loader6.load('objects/pc.json', addpc);
 
-        cube.position.set(1.2, 0, 1.2);
+            function addpc(geometry, materials) {
 
-        var player;
-        var loader = new THREE.JSONLoader();
-        loader.load('objects/player.json', addplayer);
+                var model6 = new THREE.Mesh(geometry, barrelmat2);
+                model6.scale.set(0.08, 0.08, 0.08);
+                //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
 
-        function addplayer(geometry,materials){
-
-            var model = new THREE.Mesh(geometry, lazerMaterial);
-            model.scale.set(0.08,0.08,0.08);
-            //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
-
-            model.rotation.y = Math.PI;
-            player = model;
-            cube.add(player);
-            player.position.set((cube.position.x / 10)  - 0.187,-0.15,(cube.position.z / 10) + 0.2);
-
-        }
-        var zombiemod;
-        scene.add(cube);
-
-        var loader2 = new THREE.JSONLoader();
-        loader2.load('objects/zombie.json', addzombie);
-
-        function addzombie(geometry,materials){
-
-            var model2 = new THREE.Mesh(geometry, zombiechestmat);
-            model2.scale.set(0.08,0.08,0.08);
-            //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
-
-            model2.rotation.y = Math.PI;
-            zombiemod = model2;
-            cube2.add(zombiemod);
-            zombiemod.position.set((cube.position.x / 10)  - 0.187,-0.15,(cube.position.z / 10) + 0.2);
-          //  zombie.position.set((cube.position.x / 10)  - 0.2,-0.15,(cube.position.z / 10) + 0.27);
-
-        }
-var wall1;
-      var loader3 = new THREE.JSONLoader();
-      loader3.load('objects/muurlinks.json', addscene);
-      function addscene(geometry, materials){
-          //var material1 = new THREE.MultiMaterial(materials);
-          var model3 = new THREE.Mesh(geometry, muurmat);
-          model3.scale.set(0.08,0.08,0.08);
-          wall1 = model3;
-          wall1.position.y = -0.07;
-          wall1.position.x = 0.64;
-          wall1.position.z = 1.48;
-           scene.add(wall1);
-      }
-        var wall2;
-        var loader4 = new THREE.JSONLoader();
-        loader4.load('objects/muur2.json', addwall2);
-        function addwall2(geometry, materials){
-            //var material1 = new THREE.MultiMaterial(materials);
-            var model4 = new THREE.Mesh(geometry, muurmat);
-            model4.scale.set(0.08,0.08,0.08);
-            wall2 = model4;
-            wall2.rotation.y = Math.PI / 2;
-            wall2.position.z = -0.95;
-            wall2.position.y = -0.07;
-            wall2.position.x = 1.6;
-            scene.add(wall2);
-        }
-        var wall3;
-        var loader5 = new THREE.JSONLoader();
-        loader5.load('objects/muur3.json', addwall3);
-        function addwall3(geometry, materials){
-            //var material1 = new THREE.MultiMaterial(materials);
-            var model5 = new THREE.Mesh(geometry, muurmat);
-            model5.scale.set(0.08,0.08,0.08);
-            wall3 = model5;
-           // wall2.rotation.y = Math.PI / 2;
-            wall3.position.z = 1.4;
-            wall3.position.y = -0.07;
-            wall3.position.x = 3.13;
-            scene.add(wall3);
-        }
-
-        var groundG = new THREE.BoxGeometry(2.5,0.1,2.5);
-        var groundmat = new THREE.MeshLambertMaterial({color: 0xab775f });
-        var ground  = new THREE.Mesh(groundG, groundmat);
-        ground.position.y = -0.1;
-        ground.position.x = 1.2;
-        ground.position.z = 1.01;
-        scene.add(ground);
-
-        //var wallGeo = new THREE.BoxGeometry(0.01,0.8,2.55);
-        //var wallLeft = new THREE.Mesh(wallGeo, groundmat);
-        //wallLeft.position.y = 0.3;
-        //wallLeft.position.x = -0.045;
-       // wallLeft.position.z = 1;
-        //scene.add(wallLeft);
-        /*var bbox = new THREE.Box3().setFromObject(wallLeft);
-        console.log(bbox.max.z - bbox.min.z);
-        console.log(bbox.max.x - bbox.min.x);
-        console.log(bbox.max.y - bbox.min.y);*/
-        /*var wallRight = new THREE.Mesh(wallGeo, groundmat);
-        wallRight.position.y = 0.3;
-        wallRight.position.x = 2.45;
-        wallRight.position.z = 1;
-
-        scene.add(wallRight);*/
-
-        camera = new THREE.PerspectiveCamera(45, 1000 / 1000, 0.1, 10000);
-
-        camera.position.x = 1.029638987050593;
-        camera.position.y = 2.206529389343555;
-        camera.position.z = 5.430110277975688;
-        //camera.position.x = 1.029638987050593;
-        /*camera.position.y = 10;
-        camera.position.z = 50;*/
-        camera.rotation.x = -0.4979420367530185;
-
-
-        var pointLight = new THREE.PointLight(0xffffff);
-        pointLight.position.set(100, 300, 100);
-        scene.add(pointLight);
-        var pointLight2 = new THREE.PointLight(0xffffff);
-        pointLight2.position.set(-100, 300, 100);
-        scene.add(pointLight2);
-        var healcount = 0;
-        var healcount2 = 0;
-        var playedLosingSound = 0;
-        var zombies = [];
-        var finderlist = [];
-        var gridlist = [];
-        var zombieHealthList = [];
-        var path;
-        var pathlist = [];
-        var startx = 0;
-        var startz = 0;
-        var endx = 0;
-        var endz = 0;
-        var spawnzombies = 0;
-        var isImmuneToDamge = 0;
-        var totalBarrels = 0;
-        var lazerCooldown = 0;
-        var multi =2;
-        var healthdef = 100;
-        var keyState = {};
-       // var countlvl = 1;
-        //--------------------
-        weapondisplay();
-        zombiespawner();
-        zombielist();
-        pathfinder();
-        timer();
-
-
-        //--------------------
-        window.addEventListener('keydown',function(z){
-            keyState[z.keyCode || z.which] = true;
-        },true);
-
-        window.addEventListener('keyup',function(z){
-            keyState[z.keyCode || z.which] = false;
-        },true);
-
-        //--------------------
-        $(document).keydown(function (e) {
-            switch (e.which) {
-                case 80: //p
-                    setPause();
-                    break;
-                default:
-                    return;
+                model6.rotation.y = Math.PI * 1.5;
+                computer = model6;
+                computer.position.z = -0.2;
+                computer.position.y = -0.1;
+                //computer.position.set((barrel.position.x ) ,-0.15,(barrel.position.z) + 0.2);
+                barrel.add(computer);
             }
-            e.preventDefault();
-        });
+            var krijt;
+            var loader7 = new THREE.JSONLoader();
+            loader7.load('objects/bord1.json', addkrijt);
 
-        function setPause() {
-            if (isPaused == 0) {
-                isPaused = 1;
-                myAudio.pause();
-            }
-            else {
-                isPaused = 0;
-                myAudio.play();
-                render();
-            }
-        }
-        function walkstate() {
-            //left
-            if (keyState[37] || keyState[65]){
-                if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) - 1]) == 0) {
-                    //left = true;
-                    if(keyState[37] && keyState[38]){
-                        playerDirection=5;
-                        cube.position.x -= 0.1;
-                        //cube.position.z -= 0.1;
-                        cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
-                    }else  if(keyState[40] && keyState[37]){
-                        playerDirection= 8;
-                        cube.position.x -= 0.1;
-                       // cube.position.z += 0.1;
-                        cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
-                    }else{
-                        playerDirection = 4;
-                        cube.position.x -= 0.1;
-                        cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z));}
-                }
-            }
-            //up
-            if (keyState[38] || keyState[68]){
-                if ((matrix[Math.round(cube.position.z * 10) - 1][Math.round(cube.position.x * 10)]) == 0) {
-                    //up = true;
-                    if(keyState[38] && keyState[39]){
-                        playerDirection= 6;
-                       // cube.position.x += 0.1;
-                        cube.position.z -= 0.1;
-                        cube.lookAt(new THREE.Vector3(cube.position.x + 1,0,cube.position.z - 1));
-                    }else if(keyState[37] && keyState[38]){
-                        playerDirection=5;
-                        //cube.position.x -= 0.1;
-                        cube.position.z -= 0.1;
-                        cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
-                    }else{
-                        playerDirection = 1;
-                        cube.position.z -= 0.1;
-                        cube.lookAt(new THREE.Vector3(cube.position.x ,0,cube.position.z - 1));}
-                }
-            }
-            //right
-            if (keyState[39] || keyState[68]){
-                if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) + 1]) == 0) {
-                    //right = true;
-                    if(keyState[39] && keyState[40]){
-                        playerDirection=7;
-                        cube.position.x += 0.1;
-                        //cube.position.z += 0.1;
-                        cube.lookAt(new THREE.Vector3(cube.position.x + 1,0,cube.position.z + 1));
-                    }else if(keyState[38] && keyState[39]){
-                        playerDirection=6;
-                        cube.position.x += 0.1;
-                       // cube.position.z -= 0.1;
-                        cube.lookAt(new THREE.Vector3(cube.position.x + 1,0,cube.position.z - 1));
-                    }else{
-                        playerDirection = 2;
-                        cube.position.x += 0.1;
-                        cube.lookAt(new THREE.Vector3(cube.position.x + 1,0,cube.position.z));}
-                }
-            }
-            //down
-            if (keyState[40] || keyState[68]){
-                if ((matrix[Math.round(cube.position.z * 10) + 1][Math.round(cube.position.x * 10)]) == 0) {
-                    //down = true;
-                    if(keyState[39] && keyState[40]){
-                        playerDirection=7;
-                        //cube.position.x += 0.1;
-                        cube.position.z += 0.1;
-                        cube.lookAt(new THREE.Vector3(cube.position.x + 1,0,cube.position.z + 1));
-                    }else  if(keyState[40] && keyState[37]){
-                        playerDirection=8;
-                        //cube.position.x -= 0.1;
-                        cube.position.z += 0.1;
-                        cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
-                    }else {
-                        playerDirection = 3;
-                        cube.position.z += 0.1;
-                        cube.lookAt(new THREE.Vector3(cube.position.x ,0,cube.position.z +1));}
-                }
+            function addkrijt(geometry, materials) {
+
+                //var krijtmat = new THREE.MultiMaterial( materials );
+                var mTexture = new THREE.ImageUtils.loadTexture("images/bord.jpg");
+                var mMaterial = new THREE.MeshPhongMaterial({ map: mTexture, side: THREE.DoubleSide });
+                var model7 = new THREE.Mesh(geometry, mMaterial);
+                model7.scale.set(0.08, 0.08, 0.08);
+                //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
+
+                //model6.rotation.y = Math.PI * 1.5;
+                krijt = model7;
+                model6.rotation.y = Math.PI * 1.5;
+                //computer.position.set((barrel.position.x ) ,-0.15,(barrel.position.z) + 0.2);
+                scene.add(krijt);
             }
 
+            var cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
+            var legleft = leg.clone();
 
 
-           setTimeout(walkstate, 90);
-        }
-        walkstate();
+            cube.position.set(1.2, 0, 1.2);
 
+            var player;
+            var loader = new THREE.JSONLoader();
+            loader.load('objects/player.json', addplayer);
 
-        function setHealth() {
-            document.getElementById('health').value = health;
+            function addplayer(geometry, materials) {
 
+                var model = new THREE.Mesh(geometry, lazerMaterial);
+                model.scale.set(0.08, 0.08, 0.08);
+                //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
 
-        }
-
-        function setScore() {
-            document.getElementById('score').innerHTML = "Score:" + score;
-            document.getElementById('wave').innerHTML = "Wave:" + level;
-            document.getElementById('knop').value =  score;
-        }
-        function weapondisplay(){
-            if(weapon1){
-                document.getElementById('weapon').innerHTML = " In Hand: lazer";
-            }
-            else if (weapon2) {
-                document.getElementById('weapon').innerHTML = "In Hand: computer";
-            }
-            else if (weapon3) { //rocket edit
-                document.getElementById('weapon').innerHTML = "In Hand: RPG?"
-            }
-        }
-
-
-        renderer = new THREE.WebGLRenderer({antialias: true});
-        renderer.setSize(1000, 1000);
-        document.body.appendChild(renderer.domElement);
-
-       /* controls = new THREE.OrbitControls(camera, renderer.domElement);
-
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.25;
-        controls.enableZoom = true;*/
-
-
-        function healing(){
-          /*  console.log("-------")
-            console.log(endx);
-            console.log(heal.position.x * 10);
-            console.log(endz);
-            console.log(heal.position.z * 10);
-            console.log("-------")*/
-            if(endx == heal.position.x * 10 && endz == heal.position.z * 10 && healcount == 0 && health < 100){
-                health = 100;
-                scene.remove(heal);
-                if(health == 100) {
-                    healcount = 1;
-                }
-            }
-            if(endx == heal2.position.x * 10 && endz == heal2.position.z * 10 && healcount2 == 0 && health < 100){
-                health = 100;
-                scene.remove(heal2);
-                if(health == 100) {
-                    healcount2 = 1;
-                }
-            }
-        }
-        function levelcalc() {
-            for(var i = 0; i <allbarrels.length; i++){
-                matrix[Math.round(allbarrels[i].position.z * 10)][Math.round(allbarrels[i].position.x * 10)] = 0;
-                scene.remove(allbarrels[i]);
+                model.rotation.y = Math.PI;
+                player = model;
+                cube.add(player);
+                player.position.set((cube.position.x / 10) - 0.187, -0.15, (cube.position.z / 10) + 0.2);
 
             }
-            totalBarrels = 0;
-            level++;
-            zombies = [];
-            zombieHealthList = [];
-            pathlist = [];
-            finderlist = [];
-            gridlist = [];
-            zombieaantal = 5;
-            spawnzombies = 0;
+            var zombiemod;
+            scene.add(cube);
+
+            var loader2 = new THREE.JSONLoader();
+            loader2.load('objects/zombie.json', addzombie);
+
+            function addzombie(geometry, materials) {
+
+                var model2 = new THREE.Mesh(geometry, zombiechestmat);
+                model2.scale.set(0.08, 0.08, 0.08);
+                //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
+
+                model2.rotation.y = Math.PI;
+                zombiemod = model2;
+                cube2.add(zombiemod);
+                zombiemod.position.set((cube.position.x / 10) - 0.187, -0.15, (cube.position.z / 10) + 0.2);
+                //  zombie.position.set((cube.position.x / 10)  - 0.2,-0.15,(cube.position.z / 10) + 0.27);
+
+            }
+            var wall1;
+            var loader3 = new THREE.JSONLoader();
+            loader3.load('objects/muurlinks.json', addscene);
+            function addscene(geometry, materials) {
+                //var material1 = new THREE.MultiMaterial(materials);
+                var model3 = new THREE.Mesh(geometry, muurmat);
+                model3.scale.set(0.08, 0.08, 0.08);
+                wall1 = model3;
+                wall1.position.y = -0.07;
+                wall1.position.x = 0.64;
+                wall1.position.z = 1.48;
+                scene.add(wall1);
+            }
+            var wall2;
+            var loader4 = new THREE.JSONLoader();
+            loader4.load('objects/muur2.json', addwall2);
+            function addwall2(geometry, materials) {
+                //var material1 = new THREE.MultiMaterial(materials);
+                var model4 = new THREE.Mesh(geometry, muurmat);
+                model4.scale.set(0.08, 0.08, 0.08);
+                wall2 = model4;
+                wall2.rotation.y = Math.PI / 2;
+                wall2.position.z = -0.95;
+                wall2.position.y = -0.07;
+                wall2.position.x = 1.6;
+                scene.add(wall2);
+            }
+            var wall3;
+            var loader5 = new THREE.JSONLoader();
+            loader5.load('objects/muur3.json', addwall3);
+            function addwall3(geometry, materials) {
+                //var material1 = new THREE.MultiMaterial(materials);
+                var model5 = new THREE.Mesh(geometry, muurmat);
+                model5.scale.set(0.08, 0.08, 0.08);
+                wall3 = model5;
+                // wall2.rotation.y = Math.PI / 2;
+                wall3.position.z = 1.4;
+                wall3.position.y = -0.07;
+                wall3.position.x = 3.13;
+                scene.add(wall3);
+            }
+
+            var groundG = new THREE.BoxGeometry(2.5, 0.1, 2.5);
+            var groundmat = new THREE.MeshLambertMaterial({ color: 0xab775f });
+            var ground = new THREE.Mesh(groundG, groundmat);
+            ground.position.y = -0.1;
+            ground.position.x = 1.2;
+            ground.position.z = 1.01;
+            scene.add(ground);
+
+            //var wallGeo = new THREE.BoxGeometry(0.01,0.8,2.55);
+            //var wallLeft = new THREE.Mesh(wallGeo, groundmat);
+            //wallLeft.position.y = 0.3;
+            //wallLeft.position.x = -0.045;
+            // wallLeft.position.z = 1;
+            //scene.add(wallLeft);
+            /*var bbox = new THREE.Box3().setFromObject(wallLeft);
+            console.log(bbox.max.z - bbox.min.z);
+            console.log(bbox.max.x - bbox.min.x);
+            console.log(bbox.max.y - bbox.min.y);*/
+            /*var wallRight = new THREE.Mesh(wallGeo, groundmat);
+            wallRight.position.y = 0.3;
+            wallRight.position.x = 2.45;
+            wallRight.position.z = 1;
+
+            scene.add(wallRight);*/
+
+            camera = new THREE.PerspectiveCamera(45, 1000 / 1000, 0.1, 10000);
+
+            camera.position.x = 1.029638987050593;
+            camera.position.y = 2.206529389343555;
+            camera.position.z = 5.430110277975688;
+            //camera.position.x = 1.029638987050593;
+            /*camera.position.y = 10;
+            camera.position.z = 50;*/
+            camera.rotation.x = -0.4979420367530185;
+
+
+            var pointLight = new THREE.PointLight(0xffffff);
+            pointLight.position.set(100, 300, 100);
+            scene.add(pointLight);
+            var pointLight2 = new THREE.PointLight(0xffffff);
+            pointLight2.position.set(-100, 300, 100);
+            scene.add(pointLight2);
+            var healcount = 0;
+            var healcount2 = 0;
+            var playedLosingSound = 0;
+            var zombies = [];
+            var finderlist = [];
+            var gridlist = [];
+            var zombieHealthList = [];
+            var path;
+            var pathlist = [];
+            var startx = 0;
+            var startz = 0;
+            var endx = 0;
+            var endz = 0;
+            var spawnzombies = 0;
+            var isImmuneToDamge = 0;
+            var totalBarrels = 0;
+            var lazerCooldown = 0;
+            var multi = 2;
+            var healthdef = 100;
+            var keyState = {};
+            // var countlvl = 1;
+            //--------------------
+            weapondisplay();
             zombiespawner();
             zombielist();
-
-            if(healcount == 1){
-                scene.add(heal);
-                healcount = 0;
-            }
-            if(healcount2 == 1){
-                scene.add(heal2);
-                healcount2 = 0;
-            }
+            pathfinder();
+            timer();
 
 
+            //--------------------
+            window.addEventListener('keydown', function (z) {
+                keyState[z.keyCode || z.which] = true;
+            }, true);
 
-        }
-        function healthmultiplier(){
-            if(zombieaantal > 50){
-                document.getElementById('warning').innerHTML = "!WARNING!: zombies will be stronger now";
-                healthdef = 100
-                healthdef = healthdef * multi;
-                multi++;
-            }
-        }
-        function zombiespawner() {
-            zombieaantal = zombieaantal * level;
-            healthmultiplier();
-            for (var i = 0; i < zombieaantal; i++) {
-                zombieHealthList[i] = healthdef;
-            }
-            if (zombieaantal > 50) {
-                zombieaantal = 50;
+            window.addEventListener('keyup', function (z) {
+                keyState[z.keyCode || z.which] = false;
+            }, true);
 
-            }
-        }
-
-
-
-
-
-        function zombielist() {
-
-            var spawnpoint1 = setInterval(function () {
-                if (spawnzombies >= zombieaantal - 2) {
-                    clearInterval(spawnpoint1)
+            //--------------------
+            $(document).keydown(function (e) {
+                switch (e.which) {
+                    case 80: //p
+                        setPause();
+                        break;
+                    default:
+                        return;
                 }
-                finderlist[spawnzombies] = new PF.AStarFinder({
-                    allowDiagonal: true,
-                    dontCrossCorners: true
-                });
+                e.preventDefault();
+            });
 
-                zombies[spawnzombies] = cube2.clone();
-                zombies[spawnzombies].position.set(2.8, 0, 0.4);
-
-                    /* var zombiearm = arm.clone();
-                var zombiearm2 = zombiearm.clone();
-                var zombieleg = leg.clone();
-                var zombielegleft = legleft.clone();
-                var zombiechest2 = zombiechest.clone();
-
-                zombies[spawnzombies].add(zombiechest2);
-                zombies[spawnzombies].add(zombieleg);
-                zombiechest2.add(zombiearm);
-                zombiechest2.add(zombiearm2);
-                //Chest.add(arm2);
-                zombies[spawnzombies].add(zombielegleft);
-                zombieleg.position.x += 0.005;
-                zombielegleft.position.x += -0.005;
-                zombieleg.position.y -= 0.01;
-                zombielegleft.position.y -= 0.01;
-                zombiechest2.position.y += 0.15;
-                //zombiearm.position.x -= 0.08;
-                zombiearm.position.z += 0.03;
-                zombiearm.position.y += 0.02;
-                zombiearm2.position.x += 0.16;
-                zombiearm2.position.z += 0.03;
-                zombiearm2.position.y += 0.02;*/
-                scene.add(zombies[spawnzombies]);
-
-                //var zombie = zombiemod.clone();
-                scene.add(zombies[spawnzombies]);
-                //zombies[spawnzombies].add(zombie);
-                //zombie.position.set((cube.position.x / 10)  - 0.2,-0.15,(cube.position.z / 10) + 0.27);
-                zombies[spawnzombies].lookAt(new THREE.Vector3( zombies[spawnzombies].position.x - 0.1,0,
-                        zombies[spawnzombies].position.z));
-                spawnzombies++;
-
-
-            }, 500);
-
-            var
-                    spawnpoint2 =
-                            setInterval(function () {
-                if (spawnzombies >= zombieaantal - 2) {
-                    clearInterval(spawnpoint2)
+            function setPause() {
+                if (isPaused == 0) {
+                    isPaused = 1;
+                    myAudio.pause();
                 }
-                finderlist[spawnzombies] = new PF.AStarFinder({
-                    allowDiagonal: true,
-                    dontCrossCorners: true
-                });
+                else {
+                    isPaused = 0;
+                    myAudio.play();
+                    render();
+                }
+            }
+            function walkstate() {
+                //left
+                if (keyState[37] || keyState[65]) {
+                    if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) - 1]) == 0) {
+                        //left = true;
+                        if (keyState[37] && keyState[38]) {
+                            playerDirection = 5;
+                            cube.position.x -= 0.1;
+                            //cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z - 1));
+                        } else if (keyState[40] && keyState[37]) {
+                            playerDirection = 8;
+                            cube.position.x -= 0.1;
+                            // cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z + 1));
+                        } else {
+                            playerDirection = 4;
+                            cube.position.x -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z));
+                        }
+                    }
+                }
+                //up
+                if (keyState[38] || keyState[68]) {
+                    if ((matrix[Math.round(cube.position.z * 10) - 1][Math.round(cube.position.x * 10)]) == 0) {
+                        //up = true;
+                        if (keyState[38] && keyState[39]) {
+                            playerDirection = 6;
+                            // cube.position.x += 0.1;
+                            cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z - 1));
+                        } else if (keyState[37] && keyState[38]) {
+                            playerDirection = 5;
+                            //cube.position.x -= 0.1;
+                            cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z - 1));
+                        } else {
+                            playerDirection = 1;
+                            cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x, 0, cube.position.z - 1));
+                        }
+                    }
+                }
+                //right
+                if (keyState[39] || keyState[68]) {
+                    if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) + 1]) == 0) {
+                        //right = true;
+                        if (keyState[39] && keyState[40]) {
+                            playerDirection = 7;
+                            cube.position.x += 0.1;
+                            //cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z + 1));
+                        } else if (keyState[38] && keyState[39]) {
+                            playerDirection = 6;
+                            cube.position.x += 0.1;
+                            // cube.position.z -= 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z - 1));
+                        } else {
+                            playerDirection = 2;
+                            cube.position.x += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z));
+                        }
+                    }
+                }
+                //down
+                if (keyState[40] || keyState[68]) {
+                    if ((matrix[Math.round(cube.position.z * 10) + 1][Math.round(cube.position.x * 10)]) == 0) {
+                        //down = true;
+                        if (keyState[39] && keyState[40]) {
+                            playerDirection = 7;
+                            //cube.position.x += 0.1;
+                            cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z + 1));
+                        } else if (keyState[40] && keyState[37]) {
+                            playerDirection = 8;
+                            //cube.position.x -= 0.1;
+                            cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z + 1));
+                        } else {
+                            playerDirection = 3;
+                            cube.position.z += 0.1;
+                            cube.lookAt(new THREE.Vector3(cube.position.x, 0, cube.position.z + 1));
+                        }
+                    }
+                }
 
+
+
+                setTimeout(walkstate, 90);
+            }
+            walkstate();
+
+
+            function setHealth() {
+                document.getElementById('health').value = health;
+
+
+            }
+
+            function setScore() {
+                document.getElementById('score').innerHTML = "Score:" + score;
+                document.getElementById('wave').innerHTML = "Wave:" + level;
+                document.getElementById('knop').value = score;
+            }
+            function weapondisplay() {
+                if (weapon1) {
+                    document.getElementById('weapon').innerHTML = " In Hand: lazer";
+                }
+                else if (weapon2) {
+                    document.getElementById('weapon').innerHTML = "In Hand: computer";
+                }
+                else if (weapon3) { //rocket edit
+                    document.getElementById('weapon').innerHTML = "In Hand: RPG?"
+                }
+            }
+
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(1000, 1000);
+            document.body.appendChild(renderer.domElement);
+
+            /* controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+             controls.enableDamping = true;
+             controls.dampingFactor = 0.25;
+             controls.enableZoom = true;*/
+
+
+            function healing() {
+                /*  console.log("-------")
+                  console.log(endx);
+                  console.log(heal.position.x * 10);
+                  console.log(endz);
+                  console.log(heal.position.z * 10);
+                  console.log("-------")*/
+                if (endx == heal.position.x * 10 && endz == heal.position.z * 10 && healcount == 0 && health < 100) {
+                    health = 100;
+                    scene.remove(heal);
+                    if (health == 100) {
+                        healcount = 1;
+                    }
+                }
+                if (endx == heal2.position.x * 10 && endz == heal2.position.z * 10 && healcount2 == 0 && health < 100) {
+                    health = 100;
+                    scene.remove(heal2);
+                    if (health == 100) {
+                        healcount2 = 1;
+                    }
+                }
+            }
+            function levelcalc() {
+                for (var i = 0; i < allbarrels.length; i++) {
+                    matrix[Math.round(allbarrels[i].position.z * 10)][Math.round(allbarrels[i].position.x * 10)] = 0;
+                    scene.remove(allbarrels[i]);
+
+                }
+                totalBarrels = 0;
+                level++;
+                zombies = [];
+                zombieHealthList = [];
+                pathlist = [];
+                finderlist = [];
+                gridlist = [];
+                zombieaantal = 5;
+                spawnzombies = 0;
+                zombiespawner();
+                zombielist();
+
+                if (healcount == 1) {
+                    scene.add(heal);
+                    healcount = 0;
+                }
+                if (healcount2 == 1) {
+                    scene.add(heal2);
+                    healcount2 = 0;
+                }
+
+
+
+            }
+            function healthmultiplier() {
+                if (zombieaantal > 50) {
+                    document.getElementById('warning').innerHTML = "!WARNING!: zombies will be stronger now";
+                    healthdef = 100
+                    healthdef = healthdef * multi;
+                    multi++;
+                }
+            }
+            function zombiespawner() {
+                zombieaantal = zombieaantal * level;
+                healthmultiplier();
+                for (var i = 0; i < zombieaantal; i++) {
+                    zombieHealthList[i] = healthdef;
+                }
+                if (zombieaantal > 50) {
+                    zombieaantal = 50;
+
+                }
+            }
+
+
+
+
+
+            function zombielist() {
+
+                var spawnpoint1 = setInterval(function () {
+                    if (spawnzombies >= zombieaantal - 2) {
+                        clearInterval(spawnpoint1)
+                    }
+                    finderlist[spawnzombies] = new PF.AStarFinder({
+                        allowDiagonal: true,
+                        dontCrossCorners: true
+                    });
 
                     zombies[spawnzombies] = cube2.clone();
-                    zombies[spawnzombies].position.set(-0.4, 0, 0.4);
+                    zombies[spawnzombies].position.set(2.8, 0, 0.4);
 
                     /* var zombiearm = arm.clone();
                 var zombiearm2 = zombiearm.clone();
@@ -677,365 +633,424 @@ var wall1;
                 zombiearm2.position.x += 0.16;
                 zombiearm2.position.z += 0.03;
                 zombiearm2.position.y += 0.02;*/
-              // var zombie = zombiemod.clone();
-                scene.add(zombies[spawnzombies]);
-                //zombies[spawnzombies].add(zombie);
-               // zombie.position.set((cube.position.x / 10)  - 0.2,-0.15,(cube.position.z / 10) + 0.27);
-                zombies[spawnzombies].lookAt(new THREE.Vector3(zombies[spawnzombies].position.x + 0.1,0,
-                        zombies[spawnzombies].position.z));
-                spawnzombies++;
+                    scene.add(zombies[spawnzombies]);
 
-            }, 505);
-
-        }
+                    //var zombie = zombiemod.clone();
+                    scene.add(zombies[spawnzombies]);
+                    //zombies[spawnzombies].add(zombie);
+                    //zombie.position.set((cube.position.x / 10)  - 0.2,-0.15,(cube.position.z / 10) + 0.27);
+                    zombies[spawnzombies].lookAt(new THREE.Vector3(zombies[spawnzombies].position.x - 0.1, 0,
+                            zombies[spawnzombies].position.z));
+                    spawnzombies++;
 
 
+                }, 500);
+
+                var
+                        spawnpoint2 =
+                                setInterval(function () {
+                                    if (spawnzombies >= zombieaantal - 2) {
+                                        clearInterval(spawnpoint2)
+                                    }
+                                    finderlist[spawnzombies] = new PF.AStarFinder({
+                                        allowDiagonal: true,
+                                        dontCrossCorners: true
+                                    });
 
 
+                                    zombies[spawnzombies] = cube2.clone();
+                                    zombies[spawnzombies].position.set(-0.4, 0, 0.4);
 
+                                    /* var zombiearm = arm.clone();
+                                var zombiearm2 = zombiearm.clone();
+                                var zombieleg = leg.clone();
+                                var zombielegleft = legleft.clone();
+                                var zombiechest2 = zombiechest.clone();
 
-        function pathfinder() {
+                                zombies[spawnzombies].add(zombiechest2);
+                                zombies[spawnzombies].add(zombieleg);
+                                zombiechest2.add(zombiearm);
+                                zombiechest2.add(zombiearm2);
+                                //Chest.add(arm2);
+                                zombies[spawnzombies].add(zombielegleft);
+                                zombieleg.position.x += 0.005;
+                                zombielegleft.position.x += -0.005;
+                                zombieleg.position.y -= 0.01;
+                                zombielegleft.position.y -= 0.01;
+                                zombiechest2.position.y += 0.15;
+                                //zombiearm.position.x -= 0.08;
+                                zombiearm.position.z += 0.03;
+                                zombiearm.position.y += 0.02;
+                                zombiearm2.position.x += 0.16;
+                                zombiearm2.position.z += 0.03;
+                                zombiearm2.position.y += 0.02;*/
+                                    // var zombie = zombiemod.clone();
+                                    scene.add(zombies[spawnzombies]);
+                                    //zombies[spawnzombies].add(zombie);
+                                    // zombie.position.set((cube.position.x / 10)  - 0.2,-0.15,(cube.position.z / 10) + 0.27);
+                                    zombies[spawnzombies].lookAt(new THREE.Vector3(zombies[spawnzombies].position.x + 0.1, 0,
+                                            zombies[spawnzombies].position.z));
+                                    spawnzombies++;
 
-            if (isPaused == 0) {
-                endx = Math.round(cube.position.x * 10);
-                endz = Math.round(cube.position.z * 10);
-
-
-                for (c = 0; c < zombies.length; c++) {
-                    if(zombieHealthList[c] > 0 && zombies[c].position.x < 0.1 ){
-                        zombies[c].position.x += 0.1;
-                        zombies[c].lookAt(new THREE.Vector3(zombies[c].position.x + 0.1,0,zombies[c].position.z));
-                    }else if(zombieHealthList[c] > 0 && zombies[c].position.x > 2.3){
-                        zombies[c].position.x -= 0.1;
-                        zombies[c].lookAt(new THREE.Vector3( zombies[c].position.x - 0.1,0,zombies[c].position.z));
-                    }else if (zombieHealthList[c] > 0) {
-                        gridlist[c] = new PF.Grid(matrix);
-                        startx = Math.round(zombies[c].position.x * 10);
-                        startz = Math.round(zombies[c].position.z * 10);
-                        pathlist[c] = (finderlist[c].findPath(startx, startz, endx, endz, gridlist[c])).slice(0, 3);
-                        matrix[pathlist[c][0][1]][pathlist[c][0][0]] = 0;
-
-                        zombies[c].position.x = (pathlist[c][1][0]) / 10;
-                        zombies[c].position.z = (pathlist[c][1][1]) / 10;
-
-                            zombies[c].lookAt(new THREE.Vector3(cube.position.x,0,cube.position.z));
-
-                        matrix[pathlist[c][1][1]][pathlist[c][1][0]] = 1;
-                    }
-
-
-                }
+                                }, 505);
 
             }
 
-        }
 
 
 
-        function timer() {
-            setInterval(function () {
-                pathfinder();
-
-            }, 300);
-            setInterval(function () {
-                checkZombiesHealth();
-
-            }, 4000)
-           /* setInterval(function () {
-                eightway();
-
-            }, 80);
-*/
-        }
-
-        //Start render function
-        function render() {
-            //eightway()
-            if (lazer.position.x > 2.4 || lazer.position.x < 0 || lazer.position.z > 2.4 || lazer.position.z < 0) {
-                lazer.position.x += 100;
-                lazer.position.z += 100;
-                lazerCooldown = 0;
-            }
-
-            if (rocket.position.x > 2.4 || rocket.position.x < 0 || rocket.position.z > 2.4 || rocket.position.z < 0) { //rocket edit
-                rocket.position.x += 100;
-                rocket.position.z += 100;
-                rocketCooldown = 0;
-            }
 
 
-            if (lazerDirection == 1) {
-                lazer.position.z -= 0.1;
-            }
-            else if (lazerDirection == 2) {
-                lazer.position.x += 0.1;
-            }
-            else if (lazerDirection == 3) {
-                lazer.position.z += 0.1;
-            }
-            else if (lazerDirection == 4) {
-                lazer.position.x -= 0.1;
-            }
-            else if (lazerDirection == 5) {
-                lazer.position.x -= 0.1;
-                lazer.position.z -= 0.1;
-            }
-            else if (lazerDirection == 6) {
-                lazer.position.x += 0.1;
-                lazer.position.z -= 0.1;
-            }
-            else if (lazerDirection == 7) {
-                lazer.position.x += 0.1;
-                lazer.position.z += 0.1;
-            }
-            else if (lazerDirection == 8) {
-                lazer.position.x -= 0.1;
-                lazer.position.z += 0.1;
-            }
+            function pathfinder() {
 
-            if (rocketDirection == 1) {
-                rocket.position.z -= 0.02;
-            }
-            else if (rocketDirection == 2) {
-                rocket.position.x += 0.02;
-            }
-            else if (rocketDirection == 3) {
-                rocket.position.z += 0.02;
-            }
-            else if (rocketDirection == 4) {
-                rocket.position.x -= 0.02;
-            }
-            else if (rocketDirection == 5) {
-                rocket.position.x -= 0.02;
-                rocket.position.z -= 0.02;
-            }
-            else if (rocketDirection == 6) {
-                rocket.position.x += 0.02;
-                rocket.position.z -= 0.02;
-            }
-            else if (rocketDirection == 7) {
-                rocket.position.x += 0.02;
-                rocket.position.z += 0.02;
-            }
-            else if (rocketDirection == 8) {
-                rocket.position.x -= 0.02;
-                rocket.position.z += 0.02;
-            }
+                if (isPaused == 0) {
+                    endx = Math.round(cube.position.x * 10);
+                    endz = Math.round(cube.position.z * 10);
 
-            if (isPaused == 0) {
-                setTimeout( function() {
 
-                    requestAnimationFrame( render );
+                    for (c = 0; c < zombies.length; c++) {
+                        if (zombieHealthList[c] > 0 && zombies[c].position.x < 0.1) {
+                            zombies[c].position.x += 0.1;
+                            zombies[c].lookAt(new THREE.Vector3(zombies[c].position.x + 0.1, 0, zombies[c].position.z));
+                        } else if (zombieHealthList[c] > 0 && zombies[c].position.x > 2.3) {
+                            zombies[c].position.x -= 0.1;
+                            zombies[c].lookAt(new THREE.Vector3(zombies[c].position.x - 0.1, 0, zombies[c].position.z));
+                        } else if (zombieHealthList[c] > 0) {
+                            gridlist[c] = new PF.Grid(matrix);
+                            startx = Math.round(zombies[c].position.x * 10);
+                            startz = Math.round(zombies[c].position.z * 10);
+                            pathlist[c] = (finderlist[c].findPath(startx, startz, endx, endz, gridlist[c])).slice(0, 3);
+                            matrix[pathlist[c][0][1]][pathlist[c][0][0]] = 0;
 
-                }, 1000 / 60 );
-                isImmuneToDamge = 0;
-               // walkstate();
+                            zombies[c].position.x = (pathlist[c][1][0]) / 10;
+                            zombies[c].position.z = (pathlist[c][1][1]) / 10;
 
-                for (var c = 0; c < zombies.length; c++) {
+                            zombies[c].lookAt(new THREE.Vector3(cube.position.x, 0, cube.position.z));
 
-                    //if zombie gets hit by lazer
-                    if (Math.abs(lazer.position.x - zombies[c].position.x) < 0.1 && Math.abs(lazer.position.z - zombies[c].position.z) < 0.1) {
-
-                        lazer.position.x += 100;
-                        lazer.position.z += 100;
-                        lazerCooldown = 0;
-                        zombieHealthList[c] = zombieHealthList[c] - 100;
-                       // console.log("zombie#" + c + " health: " + zombieHealthList[c])
-                        score += 20;
-                    }
-
-                    //if zombie gets hit by rocket
-                    if (Math.abs(rocket.position.x - zombies[c].position.x) < 0.1 && Math.abs(rocket.position.z - zombies[c].position.z) < 0.1) {
-
-                        rocketExplosion.play();
-                        rocket.position.x += 100;
-                        rocket.position.z += 100;
-                        rocketCooldown = 0;
-
-                        for (var i = 0; i < zombies.length; i++) {
-                            if (Math.abs(zombies[c].position.x - zombies[i].position.x) < 0.2 && Math.abs(zombies[c].position.z - zombies[i].position.z) < 0.2) {
-
-                                zombieHealthList[i] = zombieHealthList[i] - 100;
-                                score += 20;
-                            }
+                            matrix[pathlist[c][1][1]][pathlist[c][1][0]] = 1;
                         }
 
 
                     }
 
-                    //checks if zombie is dead
-                    if (zombieHealthList[c] <= 0 && zombies[c].position.y > -1) {
-                        matrix[Math.round(zombies[c].position.z * 10)][Math.round(zombies[c].position.x * 10)] = 0;
-
-                        zombies[c].position.x = -100;
-                        zombies[c].position.y = -100;
-                        zombies[c].position.z = -100;
-
-                    }
-
-                    var zombiePosX = Math.round(zombies[c].position.x * 10);
-                    var zombiePosZ = Math.round(zombies[c].position.z * 10);
-                    var playerPosX = Math.round(cube.position.x * 10);
-                    var playerPosZ = Math.round(cube.position.z * 10);
-
-                    //If zombie touches player
-                    if (zombiePosX == playerPosX && zombiePosZ == playerPosZ && isImmuneToDamge == 0) {
-                        health--;
-                        //console.log(health);
-                    }
                 }
-
-                //When health reaches 0
-                if (health <= 0) {
-
-                    //sets losing screen image
-                    var img = document.createElement("img");
-                    img.src = "images/lose.png";
-                    img.width = 680;
-                    img.height = 480;
-                    img.alt = "You lost";
-                    img.style.position = "absolute";
-                    img.style.left = "30%";
-                    img.style.top = "100px";
-
-                    // This next line will just add it to the <body> tag
-                    document.body.appendChild(img);
-                    zombies = [];
-
-                    pathlist = [];
-                    finderlist = [];
-                    gridlist = [];
-                    zombieaantal = 5;
-                    spawnzombies = 0;
-                    zombieHealthList[0] = 100;
-                    //document.getElementById('gameinfo').style.display = "none";
-                    document.getElementById("gameInfo").style.display = "none";
-                    document.getElementById("input").style.display = "block";
-                    document.getElementById("submit").style.display = "block";
-                    for( var rem = scene.children.length - 1; rem >= 0; rem--){
-                        obj = scene.children[rem];
-                        scene.remove(obj);
-                    }
-                    //plays losing sound
-                    if (playedLosingSound == 0) {
-                        myAudio.pause();
-                        myAudio.currentTime = 0;
-                        var LosingSound = new Audio('sounds/lose.wav');
-
-
-                        LosingSound.play();
-                        playedLosingSound = 1;
-
-                    }
-
-
-                }
-
-
-
-                healing();
-                setHealth();
-                setScore();
-                //controls.update();
-                renderer.render(scene, camera);
 
             }
+
+
+
+            function timer() {
+                setInterval(function () {
+                    pathfinder();
+
+                }, 300);
+                setInterval(function () {
+                    checkZombiesHealth();
+
+                }, 4000)
+                /* setInterval(function () {
+                     eightway();
+
+                 }, 80);
+     */
+            }
+
+            //Start render function
+            function render() {
+
+                //checks if score is high enough to use rpg
+                if (score >= requiredRPGScore && rpgIsUnlocked == 0) {
+                    rpgUnlockedAudio.play();
+                    rpgIsUnlocked = 1;
+                }
+                //eightway()
+                if (lazer.position.x > 2.4 || lazer.position.x < 0 || lazer.position.z > 2.4 || lazer.position.z < 0) {
+                    lazer.position.x += 100;
+                    lazer.position.z += 100;
+                    lazerCooldown = 0;
+                }
+
+                if (rocket.position.x > 2.4 || rocket.position.x < 0 || rocket.position.z > 2.4 || rocket.position.z < 0) { //rocket edit
+                    rocket.position.x += 100;
+                    rocket.position.z += 100;
+                    rocketCooldown = 0;
+                }
+
+
+                if (lazerDirection == 1) {
+                    lazer.position.z -= 0.1;
+                }
+                else if (lazerDirection == 2) {
+                    lazer.position.x += 0.1;
+                }
+                else if (lazerDirection == 3) {
+                    lazer.position.z += 0.1;
+                }
+                else if (lazerDirection == 4) {
+                    lazer.position.x -= 0.1;
+                }
+                else if (lazerDirection == 5) {
+                    lazer.position.x -= 0.1;
+                    lazer.position.z -= 0.1;
+                }
+                else if (lazerDirection == 6) {
+                    lazer.position.x += 0.1;
+                    lazer.position.z -= 0.1;
+                }
+                else if (lazerDirection == 7) {
+                    lazer.position.x += 0.1;
+                    lazer.position.z += 0.1;
+                }
+                else if (lazerDirection == 8) {
+                    lazer.position.x -= 0.1;
+                    lazer.position.z += 0.1;
+                }
+
+                if (rocketDirection == 1) {
+                    rocket.position.z -= 0.02;
+                }
+                else if (rocketDirection == 2) {
+                    rocket.position.x += 0.02;
+                }
+                else if (rocketDirection == 3) {
+                    rocket.position.z += 0.02;
+                }
+                else if (rocketDirection == 4) {
+                    rocket.position.x -= 0.02;
+                }
+                else if (rocketDirection == 5) {
+                    rocket.position.x -= 0.02;
+                    rocket.position.z -= 0.02;
+                }
+                else if (rocketDirection == 6) {
+                    rocket.position.x += 0.02;
+                    rocket.position.z -= 0.02;
+                }
+                else if (rocketDirection == 7) {
+                    rocket.position.x += 0.02;
+                    rocket.position.z += 0.02;
+                }
+                else if (rocketDirection == 8) {
+                    rocket.position.x -= 0.02;
+                    rocket.position.z += 0.02;
+                }
+
+                if (isPaused == 0) {
+                    setTimeout(function () {
+
+                        requestAnimationFrame(render);
+
+                    }, 1000 / 60);
+                    isImmuneToDamge = 0;
+                    // walkstate();
+
+                    for (var c = 0; c < zombies.length; c++) {
+
+                        //if zombie gets hit by lazer
+                        if (Math.abs(lazer.position.x - zombies[c].position.x) < 0.1 && Math.abs(lazer.position.z - zombies[c].position.z) < 0.1) {
+
+                            lazer.position.x += 100;
+                            lazer.position.z += 100;
+                            lazerCooldown = 0;
+                            zombieHealthList[c] = zombieHealthList[c] - 100;
+                            // console.log("zombie#" + c + " health: " + zombieHealthList[c])
+                            score += 20;
+                        }
+
+                        //if zombie gets hit by rocket
+                        if (Math.abs(rocket.position.x - zombies[c].position.x) < 0.1 && Math.abs(rocket.position.z - zombies[c].position.z) < 0.1) {
+
+                            rocketExplosion.play();
+                            rocket.position.x += 100;
+                            rocket.position.z += 100;
+                            rocketCooldown = 0;
+
+                            for (var i = 0; i < zombies.length; i++) {
+                                if (Math.abs(zombies[c].position.x - zombies[i].position.x) < 0.2 && Math.abs(zombies[c].position.z - zombies[i].position.z) < 0.2) {
+
+                                    zombieHealthList[i] = zombieHealthList[i] - 100;
+                                    score += 20;
+                                }
+                            }
+
+
+                        }
+
+                        //checks if zombie is dead
+                        if (zombieHealthList[c] <= 0 && zombies[c].position.y > -1) {
+                            matrix[Math.round(zombies[c].position.z * 10)][Math.round(zombies[c].position.x * 10)] = 0;
+
+                            zombies[c].position.x = -100;
+                            zombies[c].position.y = -100;
+                            zombies[c].position.z = -100;
+
+                        }
+
+                        var zombiePosX = Math.round(zombies[c].position.x * 10);
+                        var zombiePosZ = Math.round(zombies[c].position.z * 10);
+                        var playerPosX = Math.round(cube.position.x * 10);
+                        var playerPosZ = Math.round(cube.position.z * 10);
+
+                        //If zombie touches player
+                        if (zombiePosX == playerPosX && zombiePosZ == playerPosZ && isImmuneToDamge == 0) {
+                            health--;
+                            //console.log(health);
+                        }
+                    }
+
+                    //When health reaches 0
+                    if (health <= 0) {
+
+                        //sets losing screen image
+                        var img = document.createElement("img");
+                        img.src = "images/lose.png";
+                        img.width = 680;
+                        img.height = 480;
+                        img.alt = "You lost";
+                        img.style.position = "absolute";
+                        img.style.left = "30%";
+                        img.style.top = "100px";
+
+                        // This next line will just add it to the <body> tag
+                        document.body.appendChild(img);
+                        zombies = [];
+
+                        pathlist = [];
+                        finderlist = [];
+                        gridlist = [];
+                        zombieaantal = 5;
+                        spawnzombies = 0;
+                        zombieHealthList[0] = 100;
+                        //document.getElementById('gameinfo').style.display = "none";
+                        document.getElementById("gameInfo").style.display = "none";
+                        document.getElementById("input").style.display = "block";
+                        document.getElementById("submit").style.display = "block";
+                        for (var rem = scene.children.length - 1; rem >= 0; rem--) {
+                            obj = scene.children[rem];
+                            scene.remove(obj);
+                        }
+                        //plays losing sound
+                        if (playedLosingSound == 0) {
+                            myAudio.pause();
+                            myAudio.currentTime = 0;
+                            var LosingSound = new Audio('sounds/lose.wav');
+
+
+                            LosingSound.play();
+                            playedLosingSound = 1;
+
+                        }
+
+
+                    }
+
+
+
+                    healing();
+                    setHealth();
+                    setScore();
+                    //controls.update();
+                    renderer.render(scene, camera);
+
+                }
+            }
+
+            render();
+            //zombielist();
+
+            var name1;
+            /*function test5(){
+
+                name1 = document.getElementById("input").value;
+                console.log(name1);
+            }
+
+    */
+
+
+            $(document).keydown(function (e) {
+                switch (e.which) {
+                    case 32: //space
+                        if (currentWeapon == 1 && lazerCooldown == 0) {
+                            lazerCooldown = 1;
+                            lazer.position.x = cube.position.x;
+                            lazer.position.z = cube.position.z;
+                            lazerDirection = playerDirection;
+                            lazerSound.play();
+                        }
+                        else if (currentWeapon == 2 && totalBarrels < 5 && matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10)] == 0) {
+
+                            allbarrels[totalBarrels] = barrel.clone();
+
+                            scene.add(allbarrels[totalBarrels]);
+                            allbarrels[totalBarrels].position.x = cube.position.x;
+                            allbarrels[totalBarrels].position.z = cube.position.z;
+                            matrix[Math.round(allbarrels[totalBarrels].position.z * 10)][Math.round(allbarrels[totalBarrels].position.x * 10)] = 1;
+                            totalBarrels++;
+                            barrelSound.play();
+                        }
+                        else if (currentWeapon == 3 && rocketCooldown == 0 && rpgIsUnlocked == 1) {
+                            rocketCooldown = 1;
+                            rocket.position.x = cube.position.x;
+                            rocket.position.z = cube.position.z;
+                            rocketDirection = playerDirection;
+                            rocketSound.play();
+                        }
+                        break;
+                        break;
+
+                    case 49: //1
+                        weapon3 = false;
+                        weapon2 = false;
+                        weapon1 = true;
+                        weapondisplay();
+                        currentWeapon = 1;
+                        // console.log(currentWeapon);
+                        break;
+                    case 50: //2
+                        weapon1 = false;
+                        weapon3 = false;
+                        weapon2 = true;
+                        weapondisplay();
+                        currentWeapon = 2;
+                        //console.log(currentWeapon);
+                        break;
+                    case 51: //3
+                        if (rpgIsUnlocked == 1) {
+                            weapon1 = false;
+                            weapon2 = false;
+                            weapon3 = true;
+                            weapondisplay();
+                            currentWeapon = 3;
+                        }
+                    default: return;
+                }
+                e.preventDefault();
+            });
+
+
+            function checkZombiesHealth() {
+                var zombieHealthSum = 0;
+                for (var i = 0; i < zombies.length; i++) {
+                    if (zombieHealthList[i] <= 0) {
+                        scene.remove(zombies[i]);
+                    }
+                    if (zombies[i].position.y == -100) {
+                        zombieHealthList[i] = 0;
+                    }
+                    else {
+                        zombieHealthSum = 1;
+                    }
+                }
+                if (
+
+                        zombieHealthSum <= 0 && zombies.length > 0) {
+                    levelUpSound.play();
+                    levelcalc();
+                }
+            }
+
         }
-
-        render();
-        //zombielist();
-
-        var name1;
-        /*function test5(){
-
-            name1 = document.getElementById("input").value;
-            console.log(name1);
-        }
-
-*/
-
-
-        $(document).keydown(function (e) {
-            switch (e.which) {
-                case 32: //space
-                    if (currentWeapon == 1 && lazerCooldown == 0) {
-                        lazerCooldown = 1;
-                        lazer.position.x = cube.position.x;
-                        lazer.position.z = cube.position.z;
-                        lazerDirection = playerDirection;
-                        lazerSound.play();
-                    }
-                    else if (currentWeapon == 2 && totalBarrels<5 && matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10)] == 0) {
-
-                        allbarrels[totalBarrels] = barrel.clone();
-
-                        scene.add(allbarrels[totalBarrels]);
-                        allbarrels[totalBarrels].position.x = cube.position.x;
-                        allbarrels[totalBarrels].position.z = cube.position.z;
-                        matrix[Math.round(allbarrels[totalBarrels].position.z * 10)][Math.round(allbarrels[totalBarrels].position.x * 10)] = 1;
-                        totalBarrels++;
-                        barrelSound.play();
-                    }
-                    else if (currentWeapon == 3 && rocketCooldown == 0) {
-                        rocketCooldown = 1;
-                        rocket.position.x = cube.position.x;
-                        rocket.position.z = cube.position.z;
-                        rocketDirection = playerDirection;
-                        rocketSound.play();
-                    }
-                break;
-                    break;
-
-                case 49: //1
-                    weapon3 = false;
-                    weapon2 = false;
-                    weapon1 = true;
-                    weapondisplay();
-                    currentWeapon = 1;
-                    // console.log(currentWeapon);
-                    break;
-                case 50: //2
-                    weapon1 = false;
-                    weapon3 = false;
-                    weapon2 = true;
-                    weapondisplay();
-                    currentWeapon = 2;
-                    //console.log(currentWeapon);
-                    break;
-                case 51: //3
-                    weapon1 = false;
-                    weapon2 = false;
-                    weapon3 = true;
-                    weapondisplay();
-                    currentWeapon = 3;
-                default: return;
-            }
-            e.preventDefault();
-        });
-
-
-        function checkZombiesHealth() {
-            var zombieHealthSum = 0;
-            for (var i = 0; i < zombies.length; i++) {
-                if(zombieHealthList[i] <= 0){
-                    scene.remove(zombies[i]);
-                }
-                if (zombies[i].position.y == -100) {
-                    zombieHealthList[i] = 0;
-                }
-                else {
-                    zombieHealthSum = 1;
-                }
-            }
-            if (
-
-                    zombieHealthSum <= 0 && zombies.length > 0) {
-                levelUpSound.play();
-                levelcalc();
-            }
-        }
-
-}
 
 
 
