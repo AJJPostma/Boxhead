@@ -42,6 +42,24 @@
     <img id="knop" src="images/SelectorScreen_StartAdventure_Highlight.png" onclick="menu()" style="top:30%; left:40%; position: relative;">
 
 <script type="text/javascript">
+
+function ajsender() {
+
+            name1 = document.getElementById("input").value;
+            console.log(name1);
+            var test = name1;
+            var xhttp;
+
+            xhttp = new XMLHttpRequest();
+            /*xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("txtHint").innerHTML = this.responseText;
+                }
+            };*/
+            xhttp.open("POST", "end.php?q="+ score + "&" +"n=" +test, true);
+            xhttp.send();
+            window.setTimeout(reloadpage,5000);
+        }
     function menu() {
         document.getElementById("knop").style.display = "none";
         document.getElementById("gameInfo").style.display = "block";
@@ -932,23 +950,7 @@ var wall1;
         }
 
 */
-        function ajsender() {
-
-            name1 = document.getElementById("input").value;
-            console.log(name1);
-            var test = name1;
-            var xhttp;
-
-            xhttp = new XMLHttpRequest();
-            /*xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("txtHint").innerHTML = this.responseText;
-                }
-            };*/
-            xhttp.open("POST", "end.php?q="+ score + "&" +"n=" +test, true);
-            xhttp.send();
-            window.setTimeout(reloadpage,5000);
-        }
+        
 
         function reloadpage(){
             window.location.reload();
