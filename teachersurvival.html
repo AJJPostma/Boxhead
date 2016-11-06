@@ -39,8 +39,14 @@
     <input id="input" type="text" style="display: none">
     <button type="button" id="submit" style="display: none" onclick="ajsender()">Change Content</button>
 
-    <img id="knop" src="images/SelectorScreen_StartAdventure_Highlight.png" onclick="menu()" style="top:30%; left:40%; position: relative;">
-
+    <div id="contain" >
+        <img id="knop" src="images/SelectorScreen_StartAdventure_Highlight.png" onclick="menu()" style="display: block;margin: auto">
+    </div>
+    <div id="contain2" style="clear: both">
+        <a href="HighScore.php">
+            <img id="knop2" src="images/highscore.jpg" style="display: block;margin: auto">
+        </a>
+    </div>
     <script type="text/javascript">
 
         var score;
@@ -57,9 +63,9 @@
                     document.getElementById("txtHint").innerHTML = this.responseText;
                 }
             };*/
-            xhttp.open("POST", "end.php?q=" + score + "&" + "n=" + test, true);
+            xhttp.open("POST", "dataconnect.php?q=" + score + "&" + "n=" + test, true);
             xhttp.send();
-            window.setTimeout(reloadpage, 5000);
+           reloadpage();
         }
 
         function reloadpage() {
@@ -75,7 +81,7 @@
                 this.currentTime = 0;
                 this.play();
             }, false);
-            myAudio.volume = 0.5;
+            myAudio.volume = 0.2;
             myAudio.play();
             var requiredRPGScore = 100;
             var rpgIsUnlocked = 0;
@@ -84,7 +90,7 @@
             var rpgUnlockedAudio = new Audio('sounds/rpgUnlocked.mp3');
             var levelUpSound = new Audio('sounds/levelUp.wav');
             score = 0;
-            var health = 1000000;
+            var health = 100;
             var isPaused = 0;
             var currentWeapon = 1;
             var weapon1 = true;
@@ -201,10 +207,35 @@
 
                 //model6.rotation.y = Math.PI * 1.5;
                 krijt = model7;
-                model6.rotation.y = Math.PI * 1.5;
+                krijt.rotation.y = Math.PI * 1.5;
+                krijt.position.x = 1.6;
+                krijt.position.y = 0.18;
                 //computer.position.set((barrel.position.x ) ,-0.15,(barrel.position.z) + 0.2);
                 scene.add(krijt);
             }
+            var rand;
+            var loader8 = new THREE.JSONLoader();
+            loader8.load('objects/rand.json', addrand);
+
+            function addrand(geometry, materials) {
+
+                //var krijtmat = new THREE.MultiMaterial( materials );
+                var mTexture2 = new THREE.ImageUtils.loadTexture("images/hout.jpg");
+                var mMaterial2 = new THREE.MeshPhongMaterial({ map: mTexture2, side: THREE.DoubleSide });
+                var model8 = new THREE.Mesh(geometry, mMaterial2);
+                model8.scale.set(0.08, 0.08, 0.08);
+                //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
+
+                //model6.rotation.y = Math.PI * 1.5;
+                rand = model8;
+                rand.rotation.y = Math.PI * 1.5;
+                rand.position.x = 1.6;
+                rand.position.y = 0.18;
+                rand.position.z = 0.01;
+                //computer.position.set((barrel.position.x ) ,-0.15,(barrel.position.z) + 0.2);
+                scene.add(rand);
+            }
+
 
             var cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
             var legleft = leg.clone();
@@ -271,7 +302,7 @@
                 wall2.rotation.y = Math.PI / 2;
                 wall2.position.z = -0.95;
                 wall2.position.y = -0.07;
-                wall2.position.x = 1.6;
+                wall2.position.x = 1.61;
                 scene.add(wall2);
             }
             var wall3;
@@ -290,46 +321,29 @@
             }
 
             var groundG = new THREE.BoxGeometry(2.5, 0.1, 2.5);
-            var groundmat = new THREE.MeshLambertMaterial({ color: 0xab775f });
-            var ground = new THREE.Mesh(groundG, groundmat);
+            var mTexture3 = new THREE.ImageUtils.loadTexture("images/vloer.jpg");
+            var mMaterial3 = new THREE.MeshPhongMaterial({ map: mTexture3, side: THREE.DoubleSide });
+
+            var ground = new THREE.Mesh(groundG, mMaterial3);
             ground.position.y = -0.1;
             ground.position.x = 1.2;
             ground.position.z = 1.01;
             scene.add(ground);
-
-            //var wallGeo = new THREE.BoxGeometry(0.01,0.8,2.55);
-            //var wallLeft = new THREE.Mesh(wallGeo, groundmat);
-            //wallLeft.position.y = 0.3;
-            //wallLeft.position.x = -0.045;
-            // wallLeft.position.z = 1;
-            //scene.add(wallLeft);
-            /*var bbox = new THREE.Box3().setFromObject(wallLeft);
-            console.log(bbox.max.z - bbox.min.z);
-            console.log(bbox.max.x - bbox.min.x);
-            console.log(bbox.max.y - bbox.min.y);*/
-            /*var wallRight = new THREE.Mesh(wallGeo, groundmat);
-            wallRight.position.y = 0.3;
-            wallRight.position.x = 2.45;
-            wallRight.position.z = 1;
-
-            scene.add(wallRight);*/
 
             camera = new THREE.PerspectiveCamera(45, 1000 / 1000, 0.1, 10000);
 
             camera.position.x = 1.029638987050593;
             camera.position.y = 2.206529389343555;
             camera.position.z = 5.430110277975688;
-            //camera.position.x = 1.029638987050593;
-            /*camera.position.y = 10;
-            camera.position.z = 50;*/
+
             camera.rotation.x = -0.4979420367530185;
 
 
             var pointLight = new THREE.PointLight(0xffffff);
-            pointLight.position.set(100, 300, 100);
+            pointLight.position.set(100, 300, 200);
             scene.add(pointLight);
             var pointLight2 = new THREE.PointLight(0xffffff);
-            pointLight2.position.set(-100, 300, 100);
+            pointLight2.position.set(-100, 300, 200);
             scene.add(pointLight2);
             var healcount = 0;
             var healcount2 = 0;
@@ -393,96 +407,98 @@
                 }
             }
             function walkstate() {
-                //left
-                if (keyState[37] || keyState[65]) {
-                    if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) - 1]) == 0) {
-                        //left = true;
-                        if (keyState[37] && keyState[38]) {
-                            playerDirection = 5;
-                            cube.position.x -= 0.1;
-                            //cube.position.z -= 0.1;
-                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z - 1));
-                        } else if (keyState[40] && keyState[37]) {
-                            playerDirection = 8;
-                            cube.position.x -= 0.1;
-                            // cube.position.z += 0.1;
-                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z + 1));
-                        } else {
-                            playerDirection = 4;
-                            cube.position.x -= 0.1;
-                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z));
+                if (isPaused == 0) {
+                    //left
+                    if (keyState[37] || keyState[65]) {
+                        if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) - 1]) == 0) {
+                            //left = true;
+                            if (keyState[37] && keyState[38]) {
+                                playerDirection = 5;
+                                cube.position.x -= 0.1;
+                                //cube.position.z -= 0.1;
+                                cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z - 1));
+                            } else if (keyState[40] && keyState[37]) {
+                                playerDirection = 8;
+                                cube.position.x -= 0.1;
+                                // cube.position.z += 0.1;
+                                cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z + 1));
+                            } else {
+                                playerDirection = 4;
+                                cube.position.x -= 0.1;
+                                cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z));
+                            }
                         }
                     }
-                }
-                //up
-                if (keyState[38] || keyState[68]) {
-                    if ((matrix[Math.round(cube.position.z * 10) - 1][Math.round(cube.position.x * 10)]) == 0) {
-                        //up = true;
-                        if (keyState[38] && keyState[39]) {
-                            playerDirection = 6;
-                            // cube.position.x += 0.1;
-                            cube.position.z -= 0.1;
-                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z - 1));
-                        } else if (keyState[37] && keyState[38]) {
-                            playerDirection = 5;
-                            //cube.position.x -= 0.1;
-                            cube.position.z -= 0.1;
-                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z - 1));
-                        } else {
-                            playerDirection = 1;
-                            cube.position.z -= 0.1;
-                            cube.lookAt(new THREE.Vector3(cube.position.x, 0, cube.position.z - 1));
+                    //up
+                    if (keyState[38] || keyState[68]) {
+                        if ((matrix[Math.round(cube.position.z * 10) - 1][Math.round(cube.position.x * 10)]) == 0) {
+                            //up = true;
+                            if (keyState[38] && keyState[39]) {
+                                playerDirection = 6;
+                                // cube.position.x += 0.1;
+                                cube.position.z -= 0.1;
+                                cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z - 1));
+                            } else if (keyState[37] && keyState[38]) {
+                                playerDirection = 5;
+                                //cube.position.x -= 0.1;
+                                cube.position.z -= 0.1;
+                                cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z - 1));
+                            } else {
+                                playerDirection = 1;
+                                cube.position.z -= 0.1;
+                                cube.lookAt(new THREE.Vector3(cube.position.x, 0, cube.position.z - 1));
+                            }
                         }
                     }
-                }
-                //right
-                if (keyState[39] || keyState[68]) {
-                    if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) + 1]) == 0) {
-                        //right = true;
-                        if (keyState[39] && keyState[40]) {
-                            playerDirection = 7;
-                            cube.position.x += 0.1;
-                            //cube.position.z += 0.1;
-                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z + 1));
-                        } else if (keyState[38] && keyState[39]) {
-                            playerDirection = 6;
-                            cube.position.x += 0.1;
-                            // cube.position.z -= 0.1;
-                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z - 1));
-                        } else {
-                            playerDirection = 2;
-                            cube.position.x += 0.1;
-                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z));
+                    //right
+                    if (keyState[39] || keyState[68]) {
+                        if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) + 1]) == 0) {
+                            //right = true;
+                            if (keyState[39] && keyState[40]) {
+                                playerDirection = 7;
+                                cube.position.x += 0.1;
+                                //cube.position.z += 0.1;
+                                cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z + 1));
+                            } else if (keyState[38] && keyState[39]) {
+                                playerDirection = 6;
+                                cube.position.x += 0.1;
+                                // cube.position.z -= 0.1;
+                                cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z - 1));
+                            } else {
+                                playerDirection = 2;
+                                cube.position.x += 0.1;
+                                cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z));
+                            }
                         }
                     }
-                }
-                //down
-                if (keyState[40] || keyState[68]) {
-                    if ((matrix[Math.round(cube.position.z * 10) + 1][Math.round(cube.position.x * 10)]) == 0) {
-                        //down = true;
-                        if (keyState[39] && keyState[40]) {
-                            playerDirection = 7;
-                            //cube.position.x += 0.1;
-                            cube.position.z += 0.1;
-                            cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z + 1));
-                        } else if (keyState[40] && keyState[37]) {
-                            playerDirection = 8;
-                            //cube.position.x -= 0.1;
-                            cube.position.z += 0.1;
-                            cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z + 1));
-                        } else {
-                            playerDirection = 3;
-                            cube.position.z += 0.1;
-                            cube.lookAt(new THREE.Vector3(cube.position.x, 0, cube.position.z + 1));
+                    //down
+                    if (keyState[40] || keyState[68]) {
+                        if ((matrix[Math.round(cube.position.z * 10) + 1][Math.round(cube.position.x * 10)]) == 0) {
+                            //down = true;
+                            if (keyState[39] && keyState[40]) {
+                                playerDirection = 7;
+                                //cube.position.x += 0.1;
+                                cube.position.z += 0.1;
+                                cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z + 1));
+                            } else if (keyState[40] && keyState[37]) {
+                                playerDirection = 8;
+                                //cube.position.x -= 0.1;
+                                cube.position.z += 0.1;
+                                cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z + 1));
+                            } else {
+                                playerDirection = 3;
+                                cube.position.z += 0.1;
+                                cube.lookAt(new THREE.Vector3(cube.position.x, 0, cube.position.z + 1));
+                            }
                         }
                     }
-                }
 
-
-
+                }
                 setTimeout(walkstate, 90);
+
             }
-            walkstate();
+
+                walkstate();
 
 
             function setHealth() {
