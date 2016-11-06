@@ -42,7 +42,30 @@
     <img id="knop" src="images/SelectorScreen_StartAdventure_Highlight.png" onclick="menu()" style="top:30%; left:40%; position: relative;">
 
 <script type="text/javascript">
+    var score;
+    function ajsender() {
+
+        name1 = document.getElementById("input").value;
+        console.log(name1);
+        var test = name1;
+        var xhttp;
+        console.log(score);
+        xhttp = new XMLHttpRequest();
+        /*xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 200) {
+         document.getElementById("txtHint").innerHTML = this.responseText;
+         }
+         };*/
+        xhttp.open("POST", "dataconnect.php?q="+ score + "&" +"n=" +test, true);
+        xhttp.send();
+        window.setTimeout(reloadpage,5000);
+    }
+
+    function reloadpage(){
+        window.location.reload();
+    }
     function menu() {
+
         document.getElementById("knop").style.display = "none";
         document.getElementById("gameInfo").style.display = "block";
         myAudio = new Audio('sounds/background.ogg');
@@ -55,8 +78,8 @@
         var lazerSound = new Audio('sounds/lazer.wav');
         var levelUpSound = new Audio('sounds/levelUp.wav');
         var barrelSound = new Audio('sounds/barrel.wav');
-        var score = 0;
-        var health = 100;
+         score = 0;
+        var health = 1000000;
         var isPaused = 0;
         var currentWeapon = 1;
         var weapon1 = true;
@@ -139,8 +162,22 @@
         scene.add(barrel);
         barrel.position.set(100, 0, 100);
         cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        var computer;
+        var loader6 = new THREE.JSONLoader();
+        loader6.load('objects/player.json', addplayer);
 
+        function addplayer(geometry,materials){
 
+            var model6 = new THREE.Mesh(geometry, lazerMaterial);
+            model6.scale.set(0.08,0.08,0.08);
+            //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
+
+            model6.rotation.y = Math.PI;
+            computer = model6;
+            barrel.add(player);
+            barrel.position.set((cube.position.x / 10)  - 0.187,-0.15,(cube.position.z / 10) + 0.2);
+
+        }
 
         var cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
         var legleft = leg.clone();
@@ -151,21 +188,7 @@
         var player;
         var zombiemod;
         scene.add(cube);
-        var loader = new THREE.JSONLoader();
-        loader.load('objects/player.json', addplayer);
 
-        function addplayer(geometry,materials){
-
-            var model = new THREE.Mesh(geometry, lazerMaterial);
-            model.scale.set(0.08,0.08,0.08);
-            //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
-
-            model.rotation.y = Math.PI;
-            player = model;
-            cube.add(player);
-            player.position.set((cube.position.x / 10)  - 0.187,-0.15,(cube.position.z / 10) + 0.2);
-
-        }
         var loader2 = new THREE.JSONLoader();
         loader2.load('objects/zombie.json', addzombie);
 
@@ -191,8 +214,8 @@ var wall1;
           model3.scale.set(0.08,0.08,0.08);
           wall1 = model3;
           wall1.position.y = -0.07;
-          wall1.position.x = 0.65;
-          wall1.position.z = 1.42;
+          wall1.position.x = 0.64;
+          wall1.position.z = 1.48;
            scene.add(wall1);
       }
         var wall2;
@@ -444,13 +467,12 @@ var wall1;
         renderer.setSize(1000, 1000);
         document.body.appendChild(renderer.domElement);
 
-        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        /*controls = new THREE.OrbitControls(camera, renderer.domElement);
 
         controls.enableDamping = true;
         controls.dampingFactor = 0.25;
         controls.enableZoom = true;
-
-
+*/
 
         function healing(){
           /*  console.log("-------")
@@ -686,46 +708,6 @@ var wall1;
             }, 80);
 */
         }
-       /* function eightway(){
-            if(left && up){
-                cube.position.x -= 0.1;
-                cube.position.z -= 0.1;
-                cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
-            }
-            if(up && right){
-                cube.position.x += 0.1;
-                cube.position.z -= 0.1;
-                cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z - 1));
-            }
-            if(right && down){
-                cube.position.x += 0.1;
-                cube.position.z += 0.1;
-                cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
-            }
-            if(down && left){
-                cube.position.x -= 0.1;
-                cube.position.z += 0.1;
-                cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z + 1));
-            }
-            if(left){
-                cube.position.x -= 0.1;
-                cube.lookAt(new THREE.Vector3(cube.position.x - 1,0,cube.position.z));
-            }
-            if(up){
-                cube.position.z -= 0.1;
-                cube.lookAt(new THREE.Vector3(cube.position.x ,0,cube.position.z - 1));
-            }
-            if(right){
-                cube.position.x += 0.1;
-                cube.lookAt(new THREE.Vector3(cube.position.x + 1,0,cube.position.z));
-            }
-            if(down){
-                cube.position.z += 0.1;
-                cube.lookAt(new THREE.Vector3(cube.position.x ,0,cube.position.z +1));
-            }
-
-
-        }*/
 
         //Start render function
         function render() {
@@ -932,27 +914,7 @@ var wall1;
         }
 
 */
-        function ajsender() {
 
-            name1 = document.getElementById("input").value;
-            console.log(name1);
-            var test = name1;
-            var xhttp;
-
-            xhttp = new XMLHttpRequest();
-            /*xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("txtHint").innerHTML = this.responseText;
-                }
-            };*/
-            xhttp.open("POST", "end.php?q="+ score + "&" +"n=" +test, true);
-            xhttp.send();
-            window.setTimeout(reloadpage,5000);
-        }
-
-        function reloadpage(){
-            window.location.reload();
-        }
 
         $(document).keydown(function (e) {
             switch (e.which) {
