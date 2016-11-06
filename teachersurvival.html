@@ -42,31 +42,8 @@
     <img id="knop" src="images/SelectorScreen_StartAdventure_Highlight.png" onclick="menu()" style="top:30%; left:40%; position: relative;">
 
 <script type="text/javascript">
-<<<<<<< HEAD
+
     var score;
-    function ajsender() {
-
-        name1 = document.getElementById("input").value;
-        console.log(name1);
-        var test = name1;
-        var xhttp;
-        console.log(score);
-        xhttp = new XMLHttpRequest();
-        /*xhttp.onreadystatechange = function() {
-         if (this.readyState == 4 && this.status == 200) {
-         document.getElementById("txtHint").innerHTML = this.responseText;
-         }
-         };*/
-        xhttp.open("POST", "dataconnect.php?q="+ score + "&" +"n=" +test, true);
-        xhttp.send();
-        window.setTimeout(reloadpage,5000);
-    }
-
-    function reloadpage(){
-        window.location.reload();
-    }
-=======
-
 function ajsender() {
 
             name1 = document.getElementById("input").value;
@@ -84,7 +61,11 @@ function ajsender() {
             xhttp.send();
             window.setTimeout(reloadpage,5000);
         }
->>>>>>> origin/master
+
+    function reloadpage(){
+        window.location.reload();
+    }
+
     function menu() {
 
         document.getElementById("knop").style.display = "none";
@@ -159,8 +140,10 @@ function ajsender() {
         var lazerMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
         var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x1ec876,transparent: true, opacity : 0});
         var cubeMaterial2 = new THREE.MeshLambertMaterial({color: 0x228b22,transparent: true, opacity : 0});
-        var barrelmat = new THREE.MeshLambertMaterial({color: 0x1ec876});
+        var barrelmat = new THREE.MeshLambertMaterial({color: 0x1ec876,transparent: true, opacity : 0});
+        var barrelmat2 = new THREE.MeshLambertMaterial({color: 0x808080});
         var zombiechestmat = new THREE.MeshLambertMaterial({color: 0x228b22});
+        var muurmat = new THREE.MeshLambertMaterial({color: 0xE1E1E1})
         var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
         var lazerarray = [];
         var heal = new THREE.Mesh(cubeGeometry,lazerMaterial);
@@ -185,19 +168,39 @@ function ajsender() {
         cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
         var computer;
         var loader6 = new THREE.JSONLoader();
-        loader6.load('objects/player.json', addplayer);
+        loader6.load('objects/pc.json', addpc);
 
-        function addplayer(geometry,materials){
+        function addpc(geometry,materials){
 
-            var model6 = new THREE.Mesh(geometry, lazerMaterial);
+            var model6 = new THREE.Mesh(geometry, barrelmat2);
             model6.scale.set(0.08,0.08,0.08);
             //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
 
-            model6.rotation.y = Math.PI;
+            model6.rotation.y = Math.PI * 1.5;
             computer = model6;
-            barrel.add(player);
-            barrel.position.set((cube.position.x / 10)  - 0.187,-0.15,(cube.position.z / 10) + 0.2);
+            computer.position.z = -0.2;
+            computer.position.y = -0.1;
+            //computer.position.set((barrel.position.x ) ,-0.15,(barrel.position.z) + 0.2);
+            barrel.add(computer);
+        }
+        var krijt;
+        var loader7 = new THREE.JSONLoader();
+        loader7.load('objects/bord1.json', addkrijt);
 
+        function addkrijt(geometry,materials){
+
+            //var krijtmat = new THREE.MultiMaterial( materials );
+            var mTexture = new THREE.ImageUtils.loadTexture("images/bord.jpg");
+            var mMaterial = new THREE.MeshPhongMaterial({ map: mTexture, side: THREE.DoubleSide });
+            var model7 = new THREE.Mesh(geometry, mMaterial);
+            model7.scale.set(0.08,0.08,0.08);
+            //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
+
+            //model6.rotation.y = Math.PI * 1.5;
+            krijt = model7;
+            model6.rotation.y = Math.PI * 1.5;
+            //computer.position.set((barrel.position.x ) ,-0.15,(barrel.position.z) + 0.2);
+            scene.add(krijt);
         }
 
         var cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial2);
@@ -207,6 +210,21 @@ function ajsender() {
         cube.position.set(1.2, 0, 1.2);
 
         var player;
+        var loader = new THREE.JSONLoader();
+        loader.load('objects/player.json', addplayer);
+
+        function addplayer(geometry,materials){
+
+            var model = new THREE.Mesh(geometry, lazerMaterial);
+            model.scale.set(0.08,0.08,0.08);
+            //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
+
+            model.rotation.y = Math.PI;
+            player = model;
+            cube.add(player);
+            player.position.set((cube.position.x / 10)  - 0.187,-0.15,(cube.position.z / 10) + 0.2);
+
+        }
         var zombiemod;
         scene.add(cube);
 
@@ -231,7 +249,7 @@ var wall1;
       loader3.load('objects/muurlinks.json', addscene);
       function addscene(geometry, materials){
           //var material1 = new THREE.MultiMaterial(materials);
-          var model3 = new THREE.Mesh(geometry, lazerMaterial);
+          var model3 = new THREE.Mesh(geometry, muurmat);
           model3.scale.set(0.08,0.08,0.08);
           wall1 = model3;
           wall1.position.y = -0.07;
@@ -244,7 +262,7 @@ var wall1;
         loader4.load('objects/muur2.json', addwall2);
         function addwall2(geometry, materials){
             //var material1 = new THREE.MultiMaterial(materials);
-            var model4 = new THREE.Mesh(geometry, lazerMaterial);
+            var model4 = new THREE.Mesh(geometry, muurmat);
             model4.scale.set(0.08,0.08,0.08);
             wall2 = model4;
             wall2.rotation.y = Math.PI / 2;
@@ -258,7 +276,7 @@ var wall1;
         loader5.load('objects/muur3.json', addwall3);
         function addwall3(geometry, materials){
             //var material1 = new THREE.MultiMaterial(materials);
-            var model5 = new THREE.Mesh(geometry, lazerMaterial);
+            var model5 = new THREE.Mesh(geometry, muurmat);
             model5.scale.set(0.08,0.08,0.08);
             wall3 = model5;
            // wall2.rotation.y = Math.PI / 2;
@@ -273,7 +291,7 @@ var wall1;
         var ground  = new THREE.Mesh(groundG, groundmat);
         ground.position.y = -0.1;
         ground.position.x = 1.2;
-        ground.position.z = 1;
+        ground.position.z = 1.01;
         scene.add(ground);
 
         //var wallGeo = new THREE.BoxGeometry(0.01,0.8,2.55);
@@ -308,7 +326,7 @@ var wall1;
         pointLight.position.set(100, 300, 100);
         scene.add(pointLight);
         var pointLight2 = new THREE.PointLight(0xffffff);
-        pointLight2.position.set(-100, 300, -100);
+        pointLight2.position.set(-100, 300, 100);
         scene.add(pointLight2);
         var healcount = 0;
         var healcount2 = 0;
@@ -476,7 +494,7 @@ var wall1;
                 document.getElementById('weapon').innerHTML = " In Hand: lazer";
             }
             else if (weapon2) {
-                document.getElementById('weapon').innerHTML = "In Hand: tafel";
+                document.getElementById('weapon').innerHTML = "In Hand: computer";
             }
             else if (weapon3) { //rocket edit
                 document.getElementById('weapon').innerHTML = "In Hand: RPG?"
@@ -488,12 +506,12 @@ var wall1;
         renderer.setSize(1000, 1000);
         document.body.appendChild(renderer.domElement);
 
-        /*controls = new THREE.OrbitControls(camera, renderer.domElement);
+       /* controls = new THREE.OrbitControls(camera, renderer.domElement);
 
         controls.enableDamping = true;
         controls.dampingFactor = 0.25;
-        controls.enableZoom = true;
-*/
+        controls.enableZoom = true;*/
+
 
         function healing(){
           /*  console.log("-------")
@@ -935,15 +953,7 @@ var wall1;
         }
 
 */
-<<<<<<< HEAD
 
-=======
-        
-
-        function reloadpage(){
-            window.location.reload();
-        }
->>>>>>> origin/master
 
         $(document).keydown(function (e) {
             switch (e.which) {

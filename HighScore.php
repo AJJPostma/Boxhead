@@ -7,12 +7,7 @@
 <body>
 
 <?php
-$q = $_REQUEST["q"];
 
-$n = $_REQUEST["n"];
-//$n = mysql_real_escape_string($n);
-
-echo "{$n} en {$q}" ;
 $servername = "eu-cdbr-azure-west-d.cloudapp.net:3306";
 $username = "b854fea3f26f48";
 $password = "3fd6ee20";
@@ -28,7 +23,7 @@ if ($conn->connect_error) {
 echo "Connected successfully";
 
 
-$$sql = "SELECT name, score FROM score ORDER BY score DESC LIMIT 5";
+$sql = "SELECT name, score FROM score ORDER BY score DESC LIMIT 5";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
