@@ -36,12 +36,12 @@
     </div>
 </div>
 
-<input id="input" type="text" onkeyup="test()" style="display: none">
-<button type="button" id="submit" onclick="showHint(this.value)" style="display: none">Change Content</button>
+<input id="input" type="text"  style="display: none">
+<button type="button" id="submit"  style="display: none" onclick="ajsender()">Change Content</button>
 
     <img id="knop" src="images/SelectorScreen_StartAdventure_Highlight.png" onclick="menu()" style="top:30%; left:40%; position: relative;">
 
-<script>
+<script type="text/javascript">
     function menu() {
         document.getElementById("knop").style.display = "none";
         document.getElementById("gameInfo").style.display = "block";
@@ -56,7 +56,7 @@
         var levelUpSound = new Audio('sounds/levelUp.wav');
         var barrelSound = new Audio('sounds/barrel.wav');
         var score = 0;
-        var health = 100000000;
+        var health = 100;
         var isPaused = 0;
         var currentWeapon = 1;
         var weapon1 = true;
@@ -184,7 +184,7 @@
         }
 var wall1;
       var loader3 = new THREE.JSONLoader();
-      loader3.load('objects/test2.json', addscene);
+      loader3.load('objects/muurlinks.json', addscene);
       function addscene(geometry, materials){
           //var material1 = new THREE.MultiMaterial(materials);
           var model3 = new THREE.Mesh(geometry, lazerMaterial);
@@ -195,6 +195,34 @@ var wall1;
           wall1.position.z = 1.42;
            scene.add(wall1);
       }
+        var wall2;
+        var loader4 = new THREE.JSONLoader();
+        loader4.load('objects/muur2.json', addwall2);
+        function addwall2(geometry, materials){
+            //var material1 = new THREE.MultiMaterial(materials);
+            var model4 = new THREE.Mesh(geometry, lazerMaterial);
+            model4.scale.set(0.08,0.08,0.08);
+            wall2 = model4;
+            wall2.rotation.y = Math.PI / 2;
+            wall2.position.z = -0.95;
+            wall2.position.y = -0.07;
+            wall2.position.x = 1.6;
+            scene.add(wall2);
+        }
+        var wall3;
+        var loader5 = new THREE.JSONLoader();
+        loader5.load('objects/muur3.json', addwall3);
+        function addwall3(geometry, materials){
+            //var material1 = new THREE.MultiMaterial(materials);
+            var model5 = new THREE.Mesh(geometry, lazerMaterial);
+            model5.scale.set(0.08,0.08,0.08);
+            wall3 = model5;
+           // wall2.rotation.y = Math.PI / 2;
+            wall3.position.z = 1.4;
+            wall3.position.y = -0.07;
+            wall3.position.x = 3.13;
+            scene.add(wall3);
+        }
 
         var groundG = new THREE.BoxGeometry(2.5,0.1,2.5);
         var groundmat = new THREE.MeshLambertMaterial({color: 0xab775f });
@@ -204,7 +232,7 @@ var wall1;
         ground.position.z = 1;
         scene.add(ground);
 
-        var wallGeo = new THREE.BoxGeometry(0.01,0.8,2.55);
+        //var wallGeo = new THREE.BoxGeometry(0.01,0.8,2.55);
         //var wallLeft = new THREE.Mesh(wallGeo, groundmat);
         //wallLeft.position.y = 0.3;
         //wallLeft.position.x = -0.045;
@@ -214,19 +242,19 @@ var wall1;
         console.log(bbox.max.z - bbox.min.z);
         console.log(bbox.max.x - bbox.min.x);
         console.log(bbox.max.y - bbox.min.y);*/
-        var wallRight = new THREE.Mesh(wallGeo, groundmat);
+        /*var wallRight = new THREE.Mesh(wallGeo, groundmat);
         wallRight.position.y = 0.3;
         wallRight.position.x = 2.45;
         wallRight.position.z = 1;
 
-        scene.add(wallRight);
+        scene.add(wallRight);*/
 
         camera = new THREE.PerspectiveCamera(45, 1000 / 1000, 0.1, 10000);
 
         camera.position.x = 1.029638987050593;
         camera.position.y = 2.206529389343555;
         camera.position.z = 5.430110277975688;
-        camera.position.x = 1.029638987050593;
+        //camera.position.x = 1.029638987050593;
         /*camera.position.y = 10;
         camera.position.z = 50;*/
         camera.rotation.x = -0.4979420367530185;
@@ -236,7 +264,7 @@ var wall1;
         pointLight.position.set(100, 300, 100);
         scene.add(pointLight);
         var pointLight2 = new THREE.PointLight(0xffffff);
-        pointLight2.position.set(0, 300, 100);
+        pointLight2.position.set(-100, 300, -100);
         scene.add(pointLight2);
         var healcount = 0;
         var healcount2 = 0;
@@ -397,6 +425,7 @@ var wall1;
         function setScore() {
             document.getElementById('score').innerHTML = "Score:" + score;
             document.getElementById('wave').innerHTML = "Wave:" + level;
+            document.getElementById('knop').value =  score;
         }
         function weapondisplay(){
             if(weapon1){
@@ -415,11 +444,11 @@ var wall1;
         renderer.setSize(1000, 1000);
         document.body.appendChild(renderer.domElement);
 
-        /*controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
 
         controls.enableDamping = true;
         controls.dampingFactor = 0.25;
-        controls.enableZoom = true;*/
+        controls.enableZoom = true;
 
 
 
@@ -860,6 +889,8 @@ var wall1;
                     zombieHealthList[0] = 100;
                     //document.getElementById('gameinfo').style.display = "none";
                     document.getElementById("gameInfo").style.display = "none";
+                    document.getElementById("input").style.display = "block";
+                    document.getElementById("submit").style.display = "block";
                     for( var rem = scene.children.length - 1; rem >= 0; rem--){
                         obj = scene.children[rem];
                         scene.remove(obj);
@@ -894,27 +925,27 @@ var wall1;
         //zombielist();
 
         var name1;
-        function namecreator(){
+        /*function test5(){
 
             name1 = document.getElementById("input").value;
             console.log(name1);
         }
 
-        document.getElementById('knop').value =  score;
-        function showHint(str) {
+*/
+        function ajsender() {
+
+            name1 = document.getElementById("input").value;
+            console.log(name1);
             var test = name1;
             var xhttp;
-            if (str.length == 0) {
 
-                return;
-            }
             xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
+            /*xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     document.getElementById("txtHint").innerHTML = this.responseText;
                 }
-            };
-            xhttp.open("POST", "end.php?q="+ str+ "&" +"n=" +test, true);
+            };*/
+            xhttp.open("POST", "end.php?q="+ score + "&" +"n=" +test, true);
             xhttp.send();
             window.setTimeout(reloadpage,5000);
         }
