@@ -19,13 +19,15 @@
 		die("Connection failed: " . $conn->connect_error);
 	}
 	//echo "Connected successfully";
-	$sql = "SELECT name, score FROM score ORDER BY score DESC LIMIT 5";
+	$sql = "SELECT name, score, reg_date FROM score ORDER BY score DESC LIMIT 10";
 	$result = $conn->query($sql);
 	if ($result->num_rows > 0) {
 		echo "<div id=\"highscore-table\" class=\"clear\">";
 		// output data of each row
 		while($row = $result->fetch_assoc()) {
-			echo "<div class=\"user\"> <h3>" . $row["name"]. "<span>" . $row["score"]. "</td>" . "</span> </h3> </div>";
+			$currentDate = strtotime($row["reg_date"]);
+			$wtfDate = date('d-m-Y',$currentDate);
+			echo "<div class=\"user\"> <h3>" . $row["name"]."<span>". "<span id=\"reg\">".$wtfDate."</span>" . $row["score"]. "</td>" . "</span> </h3> </div>";
 		}
 		echo "</div";
 	} else {
