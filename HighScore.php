@@ -7,11 +7,10 @@
 <body>
 
 <?php
-
-$servername = "eu-cdbr-azure-west-d.cloudapp.net:3306";
-$username = "b854fea3f26f48";
-$password = "3fd6ee20";
-$dbname = "bdbdsrlqsym";
+$servername = "mysql.hostinger.nl";
+$username = "u654456641_duco";
+$password = "Project1";
+$dbname = "u654456641_score";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -38,7 +37,7 @@ $conn->close();
 
 
 ?>
-
+<button onclick="window.location.href='http://ducoportfolio.xyz/Boxhead/teachersurvival.html'">back</button>
 
 </body>
 </html>

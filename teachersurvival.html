@@ -16,9 +16,9 @@
 
     <title>Title</title>
 </head>
-<body style="overflow: hidden; background-color:black; width: 100%; height: 100%; position: absolute;">
+<body style="overflow: hidden;  background-color:black; width: 100%; height: 100%; position: absolute;">
 
-    <div id="gameInfo" style="display:none; position:absolute; color:white; left:150px; top: 80px; width: 1000px; height: 20%;">
+    <div id="gameInfo" style="display:none; position:absolute; color:white; left:150px; top: 20px; width: 1000px; height: 20%;">
         <div id="stats" style="position: relative; width: 333px; float: left;">
             <p>Health:  <progress id="health" max="100"></progress> </p>
             <p id="weapon"></p>
@@ -33,20 +33,33 @@
             <p>Press space to shoot</p>
             <p>Use number keys to change weapon</p>
             <p>Press p to pause/unpause</p>
+            <p>The red boxes are health kits</p>
         </div>
     </div>
+        <div id="sub1">
+        <input id="input" type="text" value="name" style="display: none;margin: auto">
+        </div>
+        <div id="sub2">
+        <button type="button" id="submit" style="display: none;margin: auto" onclick="ajsender()">Submit Score</button>
+        </div>
 
-    <input id="input" type="text" style="display: none">
-    <button type="button" id="submit" style="display: none" onclick="ajsender()">Change Content</button>
-
-    <div id="contain" >
-        <img id="knop" src="images/SelectorScreen_StartAdventure_Highlight.png" onclick="menu()" style="display: block;margin: auto">
+    <img src="images/menu.jpg" id="backgroundimg" style="max-width: 100%; height: auto; position: absolute; display: block">
+<div id="start" style="position: relative;">
+    <div id="contain">
+        <img id="knop" src="images/start.png"  style="display: block;margin: auto;">
     </div>
     <div id="contain2" style="clear: both">
-        <a href="HighScore.php">
-            <img id="knop2" src="images/highscore.jpg" style="display: block;margin: auto">
-        </a>
+
+            <img id="knop2" src="images/SelectorScreen_StartAdventure_Highlight.png" onclick="menu()" style="display: block;margin: auto;">
+
     </div>
+    <div id="contain3" style="clear: both">
+
+            <img id="knop3" src="images/highscore.png" onclick="newpage()" style="display: block;margin: auto;">
+
+    </div>
+</div>
+
     <script type="text/javascript">
 
         var score;
@@ -71,9 +84,13 @@
         function reloadpage() {
             window.location.reload();
         }
-
+        function newpage(){
+            window.location.href = "http://ducoportfolio.xyz/Boxhead/HighScore.php";
+        }
         function menu() {
-
+            document.getElementById("backgroundimg").style.display = "none";
+            document.getElementById("knop3").style.display = "none";
+            document.getElementById("knop2").style.display = "none";
             document.getElementById("knop").style.display = "none";
             document.getElementById("gameInfo").style.display = "block";
             myAudio = new Audio('sounds/background.ogg');
@@ -83,7 +100,7 @@
             }, false);
             myAudio.volume = 0.2;
             myAudio.play();
-            var requiredRPGScore = 100;
+            var requiredRPGScore = 4500;
             var rpgIsUnlocked = 0;
             var lazerSound = new Audio('sounds/lazer.wav');
             var barrelSound = new Audio('sounds/barrel.wav');
@@ -154,7 +171,7 @@
             var zombiechestmat = new THREE.MeshLambertMaterial({ color: 0x228b22 });
             var muurmat = new THREE.MeshLambertMaterial({ color: 0xE1E1E1 })
             var lazer = new THREE.Mesh(lazerGeometry, lazerMaterial);
-            var lazerarray = [];
+           // var lazerarray = [];
             var heal = new THREE.Mesh(cubeGeometry, lazerMaterial);
             var leg = new THREE.Mesh(legG, lazerMaterial);
             var chestG = new THREE.BoxGeometry(0.12, 0.15, 0.055);
@@ -162,8 +179,8 @@
             var armG = new THREE.BoxGeometry(0.05, 0.05, 0.1);
             var armG2 = new THREE.BoxGeometry(0.05, 0.1, 0.05);
             var arm = new THREE.Mesh(armG, lazerMaterial);
-            var arm2 = new THREE.Mesh(armG2, lazerMaterial);
-            var zombiechest = new THREE.Mesh(chestG, zombiechestmat);
+           // var arm2 = new THREE.Mesh(armG2, lazerMaterial);
+            //var zombiechest = new THREE.Mesh(chestG, zombiechestmat);
             scene.add(lazer);
             var heal2 = heal.clone();
             scene.add(heal);
@@ -175,6 +192,27 @@
             scene.add(barrel);
             barrel.position.set(100, 0, 100);
             cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+            var wallt1 = new THREE.ImageUtils.loadTexture("images/muur.jpg");
+            var wallm = new THREE.MeshPhongMaterial({ map: wallt1, side: THREE.DoubleSide });
+            var deur;
+            var loader9 = new THREE.JSONLoader();
+            loader9.load('objects/door.json', adddeur);
+
+            function adddeur(geometry, materials) {
+                var deurt = new THREE.ImageUtils.loadTexture("images/hout.jpg");
+                var deurm = new THREE.MeshPhongMaterial({ map: deurt, side: THREE.DoubleSide });
+                var model10 = new THREE.Mesh(geometry, deurm);
+                model10.scale.set(0.08, 0.08, 0.08);
+                //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
+
+                model10.rotation.y = Math.PI * 1.8;
+                deur = model10;
+                deur.position.z = 1.2;
+                deur.position.x = 0.5;
+                deur.position.y = -0.23;
+                //computer.position.set((barrel.position.x ) ,-0.15,(barrel.position.z) + 0.2);
+                scene.add(deur);
+            }
             var computer;
             var loader6 = new THREE.JSONLoader();
             loader6.load('objects/pc.json', addpc);
@@ -208,7 +246,7 @@
                 //model6.rotation.y = Math.PI * 1.5;
                 krijt = model7;
                 krijt.rotation.y = Math.PI * 1.5;
-                krijt.position.x = 1.6;
+                krijt.position.x = 1;
                 krijt.position.y = 0.18;
                 //computer.position.set((barrel.position.x ) ,-0.15,(barrel.position.z) + 0.2);
                 scene.add(krijt);
@@ -229,7 +267,7 @@
                 //model6.rotation.y = Math.PI * 1.5;
                 rand = model8;
                 rand.rotation.y = Math.PI * 1.5;
-                rand.position.x = 1.6;
+                rand.position.x = 1;
                 rand.position.y = 0.18;
                 rand.position.z = 0.01;
                 //computer.position.set((barrel.position.x ) ,-0.15,(barrel.position.z) + 0.2);
@@ -266,8 +304,9 @@
             loader2.load('objects/zombie.json', addzombie);
 
             function addzombie(geometry, materials) {
-
-                var model2 = new THREE.Mesh(geometry, zombiechestmat);
+                var zombt = new THREE.ImageUtils.loadTexture("images/zombie.jpg");
+                var zombm = new THREE.MeshPhongMaterial({ map: zombt, side: THREE.DoubleSide });
+                var model2 = new THREE.Mesh(geometry, zombm);
                 model2.scale.set(0.08, 0.08, 0.08);
                 //model.position.set(cube.position.x / 10 ,0,cube.position.z / 10);
 
@@ -283,7 +322,8 @@
             loader3.load('objects/muurlinks.json', addscene);
             function addscene(geometry, materials) {
                 //var material1 = new THREE.MultiMaterial(materials);
-                var model3 = new THREE.Mesh(geometry, muurmat);
+
+                var model3 = new THREE.Mesh(geometry, wallm);
                 model3.scale.set(0.08, 0.08, 0.08);
                 wall1 = model3;
                 wall1.position.y = -0.07;
@@ -296,7 +336,7 @@
             loader4.load('objects/muur2.json', addwall2);
             function addwall2(geometry, materials) {
                 //var material1 = new THREE.MultiMaterial(materials);
-                var model4 = new THREE.Mesh(geometry, muurmat);
+                var model4 = new THREE.Mesh(geometry, wallm);
                 model4.scale.set(0.08, 0.08, 0.08);
                 wall2 = model4;
                 wall2.rotation.y = Math.PI / 2;
@@ -310,7 +350,7 @@
             loader5.load('objects/muur3.json', addwall3);
             function addwall3(geometry, materials) {
                 //var material1 = new THREE.MultiMaterial(materials);
-                var model5 = new THREE.Mesh(geometry, muurmat);
+                var model5 = new THREE.Mesh(geometry, wallm);
                 model5.scale.set(0.08, 0.08, 0.08);
                 wall3 = model5;
                 // wall2.rotation.y = Math.PI / 2;
@@ -334,7 +374,7 @@
 
             camera.position.x = 1.029638987050593;
             camera.position.y = 2.206529389343555;
-            camera.position.z = 5.430110277975688;
+            camera.position.z = 5.830110277975688;
 
             camera.rotation.x = -0.4979420367530185;
 
@@ -365,6 +405,9 @@
             var multi = 2;
             var healthdef = 100;
             var keyState = {};
+            var ammo = 5;
+            var ammo2 = 5;
+            var totalrockets = 0;
             // var countlvl = 1;
             //--------------------
             weapondisplay();
@@ -412,17 +455,17 @@
                     if (keyState[37] || keyState[65]) {
                         if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) - 1]) == 0) {
                             //left = true;
-                            if (keyState[37] && keyState[38]) {
+                            if (keyState[37] && keyState[38] && cube.position.x > 0.1) {
                                 playerDirection = 5;
                                 cube.position.x -= 0.1;
                                 //cube.position.z -= 0.1;
                                 cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z - 1));
-                            } else if (keyState[40] && keyState[37]) {
+                            } else if (keyState[40] && keyState[37] && cube.position.x > 0.1) {
                                 playerDirection = 8;
                                 cube.position.x -= 0.1;
                                 // cube.position.z += 0.1;
                                 cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z + 1));
-                            } else {
+                            } else if(cube.position.x > 0.1) {
                                 playerDirection = 4;
                                 cube.position.x -= 0.1;
                                 cube.lookAt(new THREE.Vector3(cube.position.x - 1, 0, cube.position.z));
@@ -433,12 +476,12 @@
                     if (keyState[38] || keyState[68]) {
                         if ((matrix[Math.round(cube.position.z * 10) - 1][Math.round(cube.position.x * 10)]) == 0) {
                             //up = true;
-                            if (keyState[38] && keyState[39]) {
+                            if (keyState[38] && keyState[39] && cube.position.x < 2.3) {
                                 playerDirection = 6;
                                 // cube.position.x += 0.1;
                                 cube.position.z -= 0.1;
                                 cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z - 1));
-                            } else if (keyState[37] && keyState[38]) {
+                            } else if (keyState[37] && keyState[38] && cube.position.x > 0.1) {
                                 playerDirection = 5;
                                 //cube.position.x -= 0.1;
                                 cube.position.z -= 0.1;
@@ -454,17 +497,17 @@
                     if (keyState[39] || keyState[68]) {
                         if ((matrix[Math.round(cube.position.z * 10)][Math.round(cube.position.x * 10) + 1]) == 0) {
                             //right = true;
-                            if (keyState[39] && keyState[40]) {
+                            if (keyState[39] && keyState[40] && cube.position.x < 2.3) {
                                 playerDirection = 7;
                                 cube.position.x += 0.1;
                                 //cube.position.z += 0.1;
                                 cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z + 1));
-                            } else if (keyState[38] && keyState[39]) {
+                            } else if (keyState[38] && keyState[39] && cube.position.x < 2.3) {
                                 playerDirection = 6;
                                 cube.position.x += 0.1;
                                 // cube.position.z -= 0.1;
                                 cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z - 1));
-                            } else {
+                            } else if (cube.position.x < 2.3) {
                                 playerDirection = 2;
                                 cube.position.x += 0.1;
                                 cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z));
@@ -475,12 +518,12 @@
                     if (keyState[40] || keyState[68]) {
                         if ((matrix[Math.round(cube.position.z * 10) + 1][Math.round(cube.position.x * 10)]) == 0) {
                             //down = true;
-                            if (keyState[39] && keyState[40]) {
+                            if (keyState[39] && keyState[40] && cube.position.x < 2.3) {
                                 playerDirection = 7;
                                 //cube.position.x += 0.1;
                                 cube.position.z += 0.1;
                                 cube.lookAt(new THREE.Vector3(cube.position.x + 1, 0, cube.position.z + 1));
-                            } else if (keyState[40] && keyState[37]) {
+                            } else if (keyState[40] && keyState[37] && cube.position.x > 0.1) {
                                 playerDirection = 8;
                                 //cube.position.x -= 0.1;
                                 cube.position.z += 0.1;
@@ -517,10 +560,11 @@
                     document.getElementById('weapon').innerHTML = " In Hand: lazer";
                 }
                 else if (weapon2) {
-                    document.getElementById('weapon').innerHTML = "In Hand: computer";
+                    document.getElementById('weapon').innerHTML = "In Hand: computer (" + ammo + ")";
+                    console.log(ammo);
                 }
                 else if (weapon3) { //rocket edit
-                    document.getElementById('weapon').innerHTML = "In Hand: RPG?"
+                    document.getElementById('weapon').innerHTML = "In Hand: RPG ("+ ammo2 + ")";
                 }
             }
 
@@ -533,9 +577,9 @@
 
              controls.enableDamping = true;
              controls.dampingFactor = 0.25;
-             controls.enableZoom = true;*/
+             controls.enableZoom = true;
 
-
+*/
             function healing() {
                 /*  console.log("-------")
                   console.log(endx);
@@ -565,6 +609,7 @@
 
                 }
                 totalBarrels = 0;
+                totalrockets = 0;
                 level++;
                 zombies = [];
                 zombieHealthList = [];
@@ -584,16 +629,18 @@
                     scene.add(heal2);
                     healcount2 = 0;
                 }
-
+                ammo = 5;
+                ammo2 = 5;
 
 
             }
             function healthmultiplier() {
-                if (zombieaantal > 50) {
+                if (zombieaantal > 30) {
                     document.getElementById('warning').innerHTML = "!WARNING!: zombies will be stronger now";
-                    healthdef = 100
-                    healthdef = healthdef * multi;
-                    multi++;
+                    //healthdef = 100;
+                    multi = level / 10;
+                    healthdef = healthdef + (healthdef * multi);
+
                 }
             }
             function zombiespawner() {
@@ -626,29 +673,7 @@
                     zombies[spawnzombies] = cube2.clone();
                     zombies[spawnzombies].position.set(2.8, 0, 0.4);
 
-                    /* var zombiearm = arm.clone();
-                var zombiearm2 = zombiearm.clone();
-                var zombieleg = leg.clone();
-                var zombielegleft = legleft.clone();
-                var zombiechest2 = zombiechest.clone();
 
-                zombies[spawnzombies].add(zombiechest2);
-                zombies[spawnzombies].add(zombieleg);
-                zombiechest2.add(zombiearm);
-                zombiechest2.add(zombiearm2);
-                //Chest.add(arm2);
-                zombies[spawnzombies].add(zombielegleft);
-                zombieleg.position.x += 0.005;
-                zombielegleft.position.x += -0.005;
-                zombieleg.position.y -= 0.01;
-                zombielegleft.position.y -= 0.01;
-                zombiechest2.position.y += 0.15;
-                //zombiearm.position.x -= 0.08;
-                zombiearm.position.z += 0.03;
-                zombiearm.position.y += 0.02;
-                zombiearm2.position.x += 0.16;
-                zombiearm2.position.z += 0.03;
-                zombiearm2.position.y += 0.02;*/
                     scene.add(zombies[spawnzombies]);
 
                     //var zombie = zombiemod.clone();
@@ -677,30 +702,7 @@
                                     zombies[spawnzombies] = cube2.clone();
                                     zombies[spawnzombies].position.set(-0.4, 0, 0.4);
 
-                                    /* var zombiearm = arm.clone();
-                                var zombiearm2 = zombiearm.clone();
-                                var zombieleg = leg.clone();
-                                var zombielegleft = legleft.clone();
-                                var zombiechest2 = zombiechest.clone();
 
-                                zombies[spawnzombies].add(zombiechest2);
-                                zombies[spawnzombies].add(zombieleg);
-                                zombiechest2.add(zombiearm);
-                                zombiechest2.add(zombiearm2);
-                                //Chest.add(arm2);
-                                zombies[spawnzombies].add(zombielegleft);
-                                zombieleg.position.x += 0.005;
-                                zombielegleft.position.x += -0.005;
-                                zombieleg.position.y -= 0.01;
-                                zombielegleft.position.y -= 0.01;
-                                zombiechest2.position.y += 0.15;
-                                //zombiearm.position.x -= 0.08;
-                                zombiearm.position.z += 0.03;
-                                zombiearm.position.y += 0.02;
-                                zombiearm2.position.x += 0.16;
-                                zombiearm2.position.z += 0.03;
-                                zombiearm2.position.y += 0.02;*/
-                                    // var zombie = zombiemod.clone();
                                     scene.add(zombies[spawnzombies]);
                                     //zombies[spawnzombies].add(zombie);
                                     // zombie.position.set((cube.position.x / 10)  - 0.2,-0.15,(cube.position.z / 10) + 0.27);
@@ -764,11 +766,8 @@
                     checkZombiesHealth();
 
                 }, 4000)
-                /* setInterval(function () {
-                     eightway();
 
-                 }, 80);
-     */
+
             }
 
             //Start render function
@@ -776,7 +775,9 @@
 
                 //checks if score is high enough to use rpg
                 if (score >= requiredRPGScore && rpgIsUnlocked == 0) {
+                    rpgUnlockedAudio.volume = 1;
                     rpgUnlockedAudio.play();
+
                     rpgIsUnlocked = 1;
                 }
                 //eightway()
@@ -868,7 +869,7 @@
                             lazer.position.x += 100;
                             lazer.position.z += 100;
                             lazerCooldown = 0;
-                            zombieHealthList[c] = zombieHealthList[c] - 100;
+                            zombieHealthList[c] = zombieHealthList[c] - 34;
                             // console.log("zombie#" + c + " health: " + zombieHealthList[c])
                             score += 20;
                         }
@@ -927,6 +928,7 @@
                         img.style.left = "30%";
                         img.style.top = "100px";
 
+
                         // This next line will just add it to the <body> tag
                         document.body.appendChild(img);
                         zombies = [];
@@ -961,7 +963,7 @@
                     }
 
 
-
+                    weapondisplay();
                     healing();
                     setHealth();
                     setScore();
@@ -1003,10 +1005,12 @@
                             allbarrels[totalBarrels].position.z = cube.position.z;
                             matrix[Math.round(allbarrels[totalBarrels].position.z * 10)][Math.round(allbarrels[totalBarrels].position.x * 10)] = 1;
                             totalBarrels++;
+                            ammo -= 1;
                             barrelSound.play();
                         }
-                        else if (currentWeapon == 3 && rocketCooldown == 0 && rpgIsUnlocked == 1) {
+                        else if (currentWeapon == 3 && rocketCooldown == 0 && rpgIsUnlocked == 1 && ammo2 > 0) {
                             rocketCooldown = 1;
+                            ammo2 -= 1;
                             rocket.position.x = cube.position.x;
                             rocket.position.z = cube.position.z;
                             rocketDirection = playerDirection;
@@ -1072,4 +1076,4 @@
 
     </script>
 </body>
-</html>
+</html>	
