@@ -10,8 +10,12 @@
 $q = $_REQUEST["q"];
 
 $n = $_REQUEST["n"];
-//$n = mysql_real_escape_string($n);
 
+
+//$n = mysql_real_escape_string($n)
+
+if (int strlen ( string $n ) < 11)
+{
 echo "{$n} en {$q}" ;
 $servername = "mysql.hostinger.nl";
 $username = "u654456641_duco";
@@ -39,6 +43,13 @@ if ($conn->query($sql) === TRUE) {
 
 
 $conn->close();
+}
+
+else{
+    echo "go fuck yourself";
+}
+
+
 
 
 

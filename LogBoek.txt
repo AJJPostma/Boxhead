@@ -1,1 +1,77 @@
-haha XD LMFAO XDDDDD
+24 october: maandag
+*Project begonnen
+*Grid opgezet
+*Pathfinder opgezet
+
+25 october: dinsdag
+*Player aangemaakt, kan bewegen
+*Player precies over grid laten lopen
+*Begin zombie spawn gemaakt
+
+26 october: woensdag
+*Zombies kunnen nu na elkaar spawnen (zombies zijn nog gehardcode)
+*Speel veld heeft nu muren (functionaliteit)
+*Zombies kunnen niet meer op de zelfde positie staan
+*Aantal geluidseffecten toegevoegd
+*Losing screen toegevoegd
+
+27 october: donderdag
+*Lazer toegevoegd als eerste wapen
+*Aantal minor bug fixes
+*Poging tot toevoegen object loader, werkt nog niet
+*Terug gegaan naar three.js objecten
+*Barrels toegevoegd (worden later computers)
+*Barrels geluid toegevoegd
+*Pathfinder bugs gefixt
+*Basis functionaliteit healthpacks toegevoegd
+*Start knop toegevoegd
+
+28 oktober: vrijdag
+*Movement input edit
+*Movement bug fixes
+*Zombie health toegevoegd
+*Code opgeschoond
+
+29 oktober: zaterdag
+*Movement eindelijk smooth
+*Aantal games toegevoegd
+*Alle functionaliteit werkt nu soepel
+
+30 oktober: zondag
+*Rustdag :)
+
+31 oktober: maandag
+*Basis modellen gemaakt
+*Modellen kunnen nu ingeladen via jsonLoader
+
+1 november: dinsdag
+*RocketLauncher toegevoegd.
+*RocketLauncher schiet en explosie geluid toegevoegd
+*RocketLauncher hitbox gemaakt
+
+2 november: woensdag
+*Modellen aangepast
+*Verschillende versies samen gevoegd
+*php bestand toegevoegd om highscores toetevoegen aan mysql database
+
+3 november: donderdag
+*RocketLauncher kan nu past gebruikt worden na behalen van score x
+*php bugs gefixt
+*Scores getest, werkt nu naar behoren
+
+4 november: vrijdag
+*Basis pagina gemaakt voor het tonen van top 5 highscores (php)
+
+5 november: zaterdag
+*Modellen gemaakt/toegevoegd voor muren
+
+6 november: zondag
+*bug fixes
+*rpg opnieuw toegevoegd (was random verdwenen #magic)
+*Code opgeschoond
+*Huidige versie online gezet (testen)
+
+7 november: maandag
+*Muis werkt nu naar behoren in startscherm
+*MaxLength van naam aangepast in html (10). php/mysql komt nog
+*Logboek in elkaar gezet
